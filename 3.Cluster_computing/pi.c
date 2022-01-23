@@ -1,3 +1,5 @@
+
+//For the 2nd question in assignment
 #include <omp.h>
 #include <math.h>
 #include <stdio.h>
@@ -5,7 +7,6 @@
 
 int main (int argc, char *argv[])
 {
-
   //initialize variables
   int i;
   double pi = 0;
