@@ -26,7 +26,7 @@ Code should be of decent quality: **documented, commented, proper error handling
 
 3. Write a report containing the **full code** of the implementation, a **motivation of your chosen distribution and communication methods**, and a **discussion of the speedup curve**.
 
-## Note
+### Note
 
 - ***A passing grade requires at least a speedup of 8 on 16 processes/threads.***
 
