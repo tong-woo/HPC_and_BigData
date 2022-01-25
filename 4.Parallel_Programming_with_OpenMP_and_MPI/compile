@@ -1,7 +1,0 @@
-#!/bin/bash
-
-module load 2020
-module load GCC/9.3.0
-
-mpicc -g -Wall -o mat_vect_mul mat_vec_mul.c
-
