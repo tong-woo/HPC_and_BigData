@@ -6,8 +6,8 @@ SRC = mat_vec_mul.c
 
 JUNK +=
 
-CFLAGS += -O3 -Wall -W --std=c11 -lm
-CXXFLAGS += -O3 -Wall -W --std=c++11 -lm -Wno-cast-function-type
+CFLAGS += -O3 -Wall -W --std=c11 -lm -Wno-cast-function-type
+# CXXFLAGS += -O3 -Wall -W --std=c++11 -lm -Wno-cast-function-type
 OMP_CFLAGS = $(CFLAGS) -fopenmp
 MPI_CFLAGS = $(CFLAGS) -lmpi
 
