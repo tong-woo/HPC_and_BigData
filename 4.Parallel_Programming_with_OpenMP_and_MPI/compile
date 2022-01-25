@@ -2,5 +2,6 @@
 
 module load 2020
 module load GCC/9.3.0
-gcc -fopenmp -o matrix_vec_mul matrix_vec_mul.c -lm
+module load openmpi
+mpicc -g -Wall -o mat_vect_mul mat_vec_mul.c
 
