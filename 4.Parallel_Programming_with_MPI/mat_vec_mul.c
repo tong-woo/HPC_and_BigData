@@ -3,7 +3,8 @@
  *
  * Purpose:  Implement parallel matrix-vector multiplication based on MPI
  *           using one-dimensional array to store them. The matrix is 
- *           distributed by block rows and Vectors use block distributions.
+ *           distributed by block rows. The vector is distributed by block 
+ *           column
  *
  * Compile:  gcc -o mat_vec_mul mat_vec_mul.c(for now) || mpiCC...(later)
  * Run:      ./mat_vec_mult(for now) || mpirun ./mat_vec_mul(later)
@@ -16,9 +17,7 @@
  *
  * Errors:   
  *
- * Notes:     
- *    1. Add an overall error handling function in the future if we have free time
- *    2. 
+ * Notes:    1. Add an overall error handling function in the future if we have free time
  */
 
 #include <stdio.h>
@@ -38,7 +37,7 @@ void Mat_vec_mul(double A[], double x[],
 double row_vec_mul(double A[], int row, double x[],int N);
 
 
-/*-------------------------------------------------------------------*/
+/*--------------------------------------------------------------------*/
 int main(void) {
    double* A;
    double* x;
@@ -68,7 +67,6 @@ int main(void) {
  * Function:  Set_dims
  * Purpose:   Set the dimensions of the matrix and the vectors from stdin.
  * In args:   NA
- * 
  * Out args:  *n_p: global number of cols of A and rows of x
  *            *N_p: local number of cols of A and rows of x
  *
@@ -97,7 +95,7 @@ void Set_dims(
  * Out args:   A_pp: pointer to memory adress for matrix 
  *             x_pp: pointer to memory adress for x 
  *             y_pp: pointer to memory adress for y 
- *
+ * 
  * Errors:     if a malloc fails, the program prints a message and all
  *             processes quit
  * Note:       NA
@@ -124,9 +122,8 @@ void Allocate_dynamic_arrays(
  *            random numbers
  * In args:   N: local number of cols in A
  * Out args:  A: the local matrix
- *
- * Errors:    NA
  * 
+ * Errors:    NA
  * Note:      1.To debug code with something predictable, maybe use 
  *            an identity matrix instaed of this function
  */
@@ -149,7 +146,6 @@ void Build_matrix(
  * Out args:  x[]: the local vector
  *
  * Errors:    NA
- * 
  * Note:      1.To debug code with something predictable, maybe use 
  *            an identity vector instaed of this function
  */
@@ -169,10 +165,10 @@ void Build_vector(
  * In args:   name:    name of matrix
  *            A:       the matrix
  *            n:       number of cols
- * Errors:    
- *            
- * Notes:
+ * Out args:  NA
  * 
+ * Errors:    NA
+ * Notes:     NA
  */
 void Print_matrix(
     char      name[]    /* in */,
@@ -197,14 +193,15 @@ void Print_matrix(
  * In args:   name:       name of vector
  *            vec:        the vector array
  *            n:          global number of components
- * Errors:    
- *          
- * Notes:
+ * Out args:  NA
+ * 
+ * Errors:    NA
+ * Notes:     NA
  */
 void Print_vector(
-    char      name[]     /* in */, 
-    double    vec[] /* in */, 
-    int       n           /* in */) {
+    char      name[] /* in */, 
+    double    vec[]  /* in */, 
+    int       n      /* in */) {
         int i;
         printf("\nThe vector %s\n", name);
         for (i = 0; i < n; i++){
@@ -221,11 +218,11 @@ void Print_vector(
  * In args:   A:  matrix A
  *            x:  vector x
  *            N:  global (and local) number of columns
+ * Out args:  y:  The result matrix after multiplication
+ * 
  * Errors:    if malloc of local storage on any process fails, all
  *            processes quit.            
- * Notes:
- * 1.  
- * 2.  
+ * Notes:     NA 
  */
 void Mat_vec_mul(
     double    A[]  /* in  */, 
@@ -251,9 +248,10 @@ void Mat_vec_mul(
  *            x:   vector x
  *            N:   number of columns
  * out args:  res: stores the duble value of vector product
+ * 
  * Errors:    if malloc of local storage on any process fails, all
  *            processes quit.            
- * Notes: 
+ * Notes:     NA
  */
 double row_vec_mul(
     double    A[]  /* in  */,
