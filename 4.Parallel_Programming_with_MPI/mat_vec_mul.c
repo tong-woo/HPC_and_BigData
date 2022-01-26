@@ -265,7 +265,7 @@ double row_vec_mul(
             exit(1);
         }
         int j;
-        double res = 0.0;
+        double res = 0.0; /* out  */
         for (j = 0; j < N; j++){
             res += A[row*N+j]*x[j];
         }
