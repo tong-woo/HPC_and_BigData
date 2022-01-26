@@ -1,5 +1,5 @@
 /* File:     mat_vec_mul.c
- * Author:  HPC_Group6: Tong Wu | Leonardo Kuffó | Zhaolin Fang
+ * Author:   HPC_Group6: Tong Wu | Leonardo Kuffó | Zhaolin Fang
  *
  * Purpose:  Implement parallel matrix-vector multiplication based on MPI
  *           using one-dimensional array to store them. The matrix is 
