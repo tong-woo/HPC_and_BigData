@@ -17,7 +17,7 @@
  *
  * Errors:   TBA
  *
- * Notes:    1. Add an overall error handling function in the future if we have free time
+ * Notes:    1. Try to add error handling strategy in each function as required
  */
 
 #include <stdio.h>
@@ -44,6 +44,7 @@ int main(void) {
    double* y;
    int n, N;
    double result;
+   int row_idx = 0;                  
    Set_dims(&n, &N);                 //Hover on the functions to see details
    Allocate_dynamic_arrays(&A, &x, &y, N);
    srand((unsigned)time(NULL));      //set seed to generate random nums
@@ -54,8 +55,8 @@ int main(void) {
    /*uncomment below to verify if the first element of y vector is the same as result value*/
    // Mat_vec_mul(A, x, y, N);
    // Print_vector("y", y, N);
-   result = row_vec_mul(A, 0, x, N); // Now the product of vectors(A[0] and X) has been stored in result
-   printf("\n%f ", result);
+   result = row_vec_mul(A, row_idx, x, N); // Now the product of vectors(A[row_idx] and X) has been stored in result
+   printf("\nThe product of vector and row %d of Matrix \n%f", row_idx+1, result);
    free(A);
    free(x);
    free(y);
@@ -182,8 +183,6 @@ void Print_matrix(
             }
             printf("\n");
         }
-        printf("\n");
-
 }  /* Print_matrix */
 
 
@@ -245,12 +244,14 @@ void Mat_vec_mul(
  *            is distributed by row blocks and the vectors are distributed 
  *            by blocks of column
  * In args:   A:   matrix A
- *            row: the row index of matrix (e.g. 0,1,2...N)
+ *            row: the row index of matrix (e.g. 0,1,2...N-1)
  *            x:   vector x
  *            N:   number of columns
  * out args:  res: stores the duble value of vector product
  * 
- * Errors:    if malloc of local storage on any process fails, all
+ * Errors:    1.if the row index >= N or less then 0, then exit and print a 
+ *            error message
+ *            2.if malloc of local storage on any process fails, all
  *            processes quit.            
  * Notes:     NA
  */
@@ -259,6 +260,10 @@ double row_vec_mul(
     int       row  /* in  */, 
     double    x[]  /* in  */, 
     int       N    /* in  */){
+        if(row >= N || row < 0){
+            printf("The row index is invalid(row_idx > N)");
+            exit(1);
+        }
         int j;
         double res = 0.0;
         for (j = 0; j < N; j++){
