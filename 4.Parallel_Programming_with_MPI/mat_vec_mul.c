@@ -1,5 +1,5 @@
-/* Program:  mat_vec_mul.c
- * Authors:   Tong Wu | Leonardo Kuffó | Zhaolin Fang
+/* File:     mat_vec_mul.c
+ * Author:  HPC_Group6: Tong Wu | Leonardo Kuffó | Zhaolin Fang
  *
  * Purpose:  Implement parallel matrix-vector multiplication based on MPI
  *           using one-dimensional array to store them. The matrix is 
@@ -15,7 +15,7 @@
  *           3.n-dimensional vector x
  * Output:   Product value result = A[row]*x(for now) || Product vector y = Ax(later)
  *
- * Errors:   
+ * Errors:   TBA
  *
  * Notes:    1. Add an overall error handling function in the future if we have free time
  */
@@ -24,7 +24,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-/*--------implicit declaration of functions not allowed in C99-------*/
+/*---------implicit declaration of functions not allowed(C99)--------*/
+
 void Set_dims(int* n_p , int* N_p );
 void Allocate_dynamic_arrays(double** A_pp, double** x_pp, 
      double** y_pp, int N);
@@ -36,7 +37,6 @@ void Mat_vec_mul(double A[], double x[],
       double y[], int N);
 double row_vec_mul(double A[], int row, double x[],int N);
 
-
 /*--------------------------------------------------------------------*/
 int main(void) {
    double* A;
@@ -44,17 +44,17 @@ int main(void) {
    double* y;
    int n, N;
    double result;
-   Set_dims(&n, &N);
+   Set_dims(&n, &N);                 //Hover on the functions to see details
    Allocate_dynamic_arrays(&A, &x, &y, N);
-   srand((unsigned)time(NULL)); //set seed to generate random nums
-   Build_matrix(A, N);
-   Print_matrix("A", A, N);
-   Build_vector(x, N);
+   srand((unsigned)time(NULL));      //set seed to generate random nums
+   Build_matrix(A, N);               //Matrix array stored in A
+   Print_matrix("A", A, N);  
+   Build_vector(x, N);               //Vector array stored in x
    Print_vector("x", x, N);
-   // uncomment below to see if the first element of y vector is the same as result value
+   /*uncomment below to verify if the first element of y vector is the same as result value*/
    // Mat_vec_mul(A, x, y, N);
    // Print_vector("y", y, N);
-   result = row_vec_mul(A, 0, x, N);// Now the 2 vector(A[0] and X) product has been stored in result
+   result = row_vec_mul(A, 0, x, N); // Now the product of vectors(A[0] and X) has been stored in result
    printf("\n%f ", result);
    free(A);
    free(x);
@@ -162,9 +162,9 @@ void Build_vector(
 /*-------------------------------------------------------------------
  * Function:  Print_matrix
  * Purpose:   Print a matrix distributed by row-major order to stdout
- * In args:   name:    name of matrix
- *            A:       the matrix
- *            n:       number of cols
+ * In args:   name: name of matrix
+ *            A:    the matrix
+ *            n:    number of cols
  * Out args:  NA
  * 
  * Errors:    NA
@@ -190,9 +190,9 @@ void Print_matrix(
 /*-------------------------------------------------------------------
  * Function:  Print_vector
  * Purpose:   Print a vector with a column distribution
- * In args:   name:       name of vector
- *            vec:        the vector array
- *            n:          global number of components
+ * In args:   name: name of vector
+ *            vec:  the vector array
+ *            n:    global number of components
  * Out args:  NA
  * 
  * Errors:    NA
@@ -242,7 +242,8 @@ void Mat_vec_mul(
 /*-------------------------------------------------------------------
  * Function:  row_vec_mul
  * Purpose:   Multiply a row vector of matrix A and a vector x. The matrix 
- *            is distributed by row blocks and the vectors are distributed by blocks
+ *            is distributed by row blocks and the vectors are distributed 
+ *            by blocks of column
  * In args:   A:   matrix A
  *            row: the row index of matrix (e.g. 0,1,2...N)
  *            x:   vector x
