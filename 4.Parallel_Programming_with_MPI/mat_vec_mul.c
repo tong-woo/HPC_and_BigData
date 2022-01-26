@@ -45,7 +45,7 @@ int main(void) {
    int n, N;
    double result;
    int row_idx = 0;                  
-   Set_dims(&n, &N);                 //Hover on the functions to see details
+   Set_dims(&n, &N);                 //Hover on the functions to see details in VScode
    Allocate_dynamic_arrays(&A, &x, &y, N);
    srand((unsigned)time(NULL));      //set seed to generate random nums
    Build_matrix(A, N);               //Matrix array stored in A
