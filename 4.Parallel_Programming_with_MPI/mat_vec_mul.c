@@ -129,6 +129,12 @@ int main2(void) {
    return 0;
 }  /* main */
 
+double fRand(double fMin, double fMax)
+{
+    double f = (double)rand() / RAND_MAX;
+    return fMin + f * (fMax - fMin);
+}
+
 /**
  * Given a value to send and a worker to send the value to, send
  * a message ordering the worker to compute whether the given value
@@ -243,7 +249,7 @@ void Build_matrix(
 
    for (i = 0; i < N; i++)
       for (j = 0; j < N; j++) 
-         A[i*N + j] = ((double) rand());
+         A[i*N + j] = fRand(0.0, 100.0);
 }  /* Build_matrix */
 
 
@@ -264,7 +270,7 @@ void Build_vector(
    int i;
 
    for (i = 0; i < N; i++)
-      x[i] = ((double) rand());
+      x[i] = fRand(0.0, 100.0);
 }  /* Build_vector */
 
 
