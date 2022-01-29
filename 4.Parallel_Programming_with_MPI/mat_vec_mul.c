@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     double* MATRIX;
     double* VECTOR_V;
     double* VECTOR_RESULT;
-    int DIMENSION_SIZE = 100000; // N
+    int DIMENSION_SIZE = 50000; // N
 
     Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
 
