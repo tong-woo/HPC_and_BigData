@@ -60,14 +60,16 @@ int main(int argc, char *argv[]) {
     double* VECTOR_RESULT;
     int DIMENSION_SIZE = 4; // N
 
+    char const *p = "HEY";
+
     Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
 
     srand((unsigned)time(NULL));      //set seed to generate random nums
     Build_matrix(MATRIX, DIMENSION_SIZE);        
     Build_vector(VECTOR_V, DIMENSION_SIZE);         
 
-    Print_matrix("M", MATRIX, DIMENSION_SIZE);  
-    Print_vector("V", VECTOR_V, DIMENSION_SIZE);
+    Print_matrix(p, MATRIX, DIMENSION_SIZE);  
+    Print_vector(p, VECTOR_V, DIMENSION_SIZE);
 
     /* Start up MPI */
     MPI_Init(&argc, &argv);
@@ -87,7 +89,7 @@ int main(int argc, char *argv[]) {
             VECTOR_V,
             MATRIX
         );
-        Print_vector("R", r, DIMENSION_SIZE);
+        Print_vector(p, r, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.1f seconds\n", finish-start);
     } else {
@@ -451,11 +453,11 @@ double *run_as_master(
  */
 void run_as_worker(int DIMENSION, double * VECTOR_V) {
     MPI_Status status;
-    double * segment_and_vector;
+    double * segment_and_vector = (double *) malloc( DIMENSION * sizeof(double));
     while(true) {
         MPI_Recv(
             segment_and_vector, 
-            DIMENSION * 2, 
+            DIMENSION, 
             MPI_DOUBLE, 0, MPI_ANY_TAG, MPI_COMM_WORLD, 
             &status
         );
