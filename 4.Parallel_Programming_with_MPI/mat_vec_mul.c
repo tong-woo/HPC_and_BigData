@@ -145,7 +145,8 @@ void send_work_command(int worker, double* matrix_and_vector, int data_to_send_d
 }
 
 void turn_off_worker(int worker) {
-    MPI_Send(0.0, 1, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
+    double dummy = 0.0;
+    MPI_Send(&dummy, 1, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
 }
 
 /**
