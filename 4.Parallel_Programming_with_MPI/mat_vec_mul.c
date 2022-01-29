@@ -40,6 +40,15 @@ void Print_vector(char name[], double vec[], int n);
 void Mat_vec_mul(double A[], double x[], 
       double y[], int N);
 double row_vec_mul(double A[], int row, double x[],int N);
+double *run_as_master(
+    int worker_count, 
+    int DIMENSION_SIZE, 
+    double *VECTOR_RESULT, 
+    double *VECTOR_V, 
+    double *MATRIX
+);
+void run_as_worker(int DIMENSION, double * VECTOR_V);
+
 
 /*--------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
@@ -51,14 +60,14 @@ int main(int argc, char *argv[]) {
     double* VECTOR_RESULT;
     int DIMENSION_SIZE = 4; // N
 
-    Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, N);
+    Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
 
     srand((unsigned)time(NULL));      //set seed to generate random nums
-    Build_matrix(MATRIX, N);        
-    Build_vector(VECTOR_V, N);         
+    Build_matrix(MATRIX, DIMENSION_SIZE);        
+    Build_vector(VECTOR_V, DIMENSION_SIZE);         
 
-    Print_matrix("MATRIX", MATRIX, N);  
-    Print_vector("VECTOR_V", VECTOR_V, N);
+    Print_matrix("MATRIX", MATRIX, DIMENSION_SIZE);  
+    Print_vector("VECTOR_V", VECTOR_V, DIMENSION_SIZE);
 
     /* Start up MPI */
     MPI_Init(&argc, &argv);
@@ -78,9 +87,9 @@ int main(int argc, char *argv[]) {
             VECTOR_V,
             MATRIX
         );
-        Print_vector("VECTOR_RESULT", r, N);
+        Print_vector("VECTOR_RESULT", r, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
-        printf("Stopped as master. There are %d primes between %ld and %ld, this took %.1f seconds\n", primes, base, base + r, finish-start);
+        printf("Stopped as master. This took %.1f seconds\n", finish-start);
     } else {
         printf("Running as worker %d\n", rank);
         run_as_worker(DIMENSION_SIZE, VECTOR_V);
@@ -378,7 +387,7 @@ double row_vec_mul(
  * @param nval The number of values to examine.
  * @return The number of values in the specified range.
  */
-int *run_as_master(
+double *run_as_master(
     int worker_count, 
     int DIMENSION_SIZE, 
     double *VECTOR_RESULT, 
@@ -426,7 +435,7 @@ int *run_as_master(
             worker_dimension_mapping[worker] = dimensions_sent;
             dimensions_sent++;
         } else { // Turn off worker
-            double dummy = 0.0
+            double dummy = 0.0;
             send_work_command(worker, dummy, 1); 
             active_workers--;
         }
@@ -450,7 +459,7 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
 
         int size_of_segment;
         MPI_Get_count(
-            status, MPI_DOUBLE, &size_of_segment
+            &status, MPI_DOUBLE, &size_of_segment
         );
         if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
             break;  // The master told us to stop.
