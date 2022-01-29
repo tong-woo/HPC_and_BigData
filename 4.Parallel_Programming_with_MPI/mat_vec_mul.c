@@ -45,7 +45,8 @@ double *run_as_master(
     int DIMENSION_SIZE, 
     double *VECTOR_RESULT, 
     double *VECTOR_V, 
-    double *MATRIX
+    double *MATRIX,
+    bool last_iteration
 );
 void run_as_worker(int DIMENSION, double * VECTOR_V);
 
