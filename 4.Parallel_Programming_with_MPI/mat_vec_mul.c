@@ -281,7 +281,7 @@ void Build_vector(
  * Notes:     NA
  */
 void Print_matrix(
-    const char      name[]    /* in */,
+    char      name[]    /* in */,
     double    A[]       /* in */, 
     int       n         /* in */) {
         int i, j;
@@ -307,7 +307,7 @@ void Print_matrix(
  * Notes:     NA
  */
 void Print_vector(
-    const char      name[] /* in */, 
+    char      name[] /* in */, 
     double    vec[]  /* in */, 
     int       n      /* in */) {
         int i;
