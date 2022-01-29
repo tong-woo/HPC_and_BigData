@@ -60,16 +60,14 @@ int main(int argc, char *argv[]) {
     double* VECTOR_RESULT;
     int DIMENSION_SIZE = 4; // N
 
-    char const *p = "HEY";
-
     Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
 
     srand((unsigned)time(NULL));      //set seed to generate random nums
     Build_matrix(MATRIX, DIMENSION_SIZE);        
     Build_vector(VECTOR_V, DIMENSION_SIZE);         
 
-    Print_matrix(p, MATRIX, DIMENSION_SIZE);  
-    Print_vector(p, VECTOR_V, DIMENSION_SIZE);
+    Print_matrix("M", MATRIX, DIMENSION_SIZE);  
+    Print_vector("V", VECTOR_V, DIMENSION_SIZE);
 
     /* Start up MPI */
     MPI_Init(&argc, &argv);
@@ -89,7 +87,7 @@ int main(int argc, char *argv[]) {
             VECTOR_V,
             MATRIX
         );
-        Print_vector(p, r, DIMENSION_SIZE);
+        Print_vector("R", r, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.1f seconds\n", finish-start);
     } else {
@@ -283,7 +281,7 @@ void Build_vector(
  * Notes:     NA
  */
 void Print_matrix(
-    char      name[]    /* in */,
+    const char      name[]    /* in */,
     double    A[]       /* in */, 
     int       n         /* in */) {
         int i, j;
@@ -309,7 +307,7 @@ void Print_matrix(
  * Notes:     NA
  */
 void Print_vector(
-    char      name[] /* in */, 
+    const char      name[] /* in */, 
     double    vec[]  /* in */, 
     int       n      /* in */) {
         int i;
