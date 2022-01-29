@@ -84,7 +84,8 @@ int main(int argc, char *argv[]) {
             DIMENSION_SIZE,
             VECTOR_RESULT,
             VECTOR_V,
-            MATRIX
+            MATRIX,
+            true
         );
         //Print_vector("R", VECTOR_R, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
@@ -401,7 +402,8 @@ double *run_as_master(
     int DIMENSION_SIZE, 
     double *VECTOR_RESULT, 
     double *VECTOR_V, 
-    double *MATRIX
+    double *MATRIX,
+    bool last_iteration
 ) {
     int active_workers = 0, dimensions_sent = 0;
     int *worker_dimension_mapping = (int*) malloc(sizeof(int) * worker_count);
@@ -446,7 +448,9 @@ double *run_as_master(
             worker_dimension_mapping[worker] = dimensions_sent;
             dimensions_sent++;
         } else { // Turn off worker
-            turn_off_worker(worker); 
+            if (last_iteration){
+                turn_off_worker(worker); 
+            }
             active_workers--;
         }
     }
