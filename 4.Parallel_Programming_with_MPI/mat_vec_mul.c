@@ -21,8 +21,12 @@
  */
 
 #include <stdio.h>
+#include <mpi.h>
+#include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 #include <time.h>
+#include <string.h> 
 
 /*---------implicit declaration of functions not allowed(C99)--------*/
 
@@ -38,7 +42,61 @@ void Mat_vec_mul(double A[], double x[],
 double row_vec_mul(double A[], int row, double x[],int N);
 
 /*--------------------------------------------------------------------*/
-int main(void) {
+int main(int argc, char *argv[]) {
+    int rank;
+    int size;
+
+    double* MATRIX;
+    double* VECTOR_V;
+    double* VECTOR_RESULT;
+    int DIMENSION_SIZE = 4; // N
+
+    Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, N);
+
+    srand((unsigned)time(NULL));      //set seed to generate random nums
+    Build_matrix(MATRIX, N);        
+    Build_vector(VECTOR_V, N);         
+
+    Print_matrix("MATRIX", MATRIX, N);  
+    Print_vector("VECTOR_V", VECTOR_V, N);
+
+    /* Start up MPI */
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    const bool am_master = 0 == rank;
+
+    if (am_master) {
+        int workers = size - 1;
+        printf("Running as master with %d workers\n", workers);
+        const double start = MPI_Wtime();
+        double * r = run_as_master(
+            workers, 
+            DIMENSION_SIZE,
+            VECTOR_RESULT,
+            VECTOR_V,
+            MATRIX
+        );
+        Print_vector("VECTOR_RESULT", r, N);
+        const double finish = MPI_Wtime();
+        printf("Stopped as master. There are %d primes between %ld and %ld, this took %.1f seconds\n", primes, base, base + r, finish-start);
+    } else {
+        printf("Running as worker %d\n", rank);
+        run_as_worker(DIMENSION_SIZE, VECTOR_V);
+        printf("Stopped as worker %d\n", rank);
+    }
+
+    MPI_Finalize();
+
+    free(MATRIX);
+    free(VECTOR_V);
+    free(VECTOR_RESULT);
+    return 0;
+}  /* main */
+
+/*--------------------------------------------------------------------*/
+int main2(void) {
    double* A;
    double* x;
    double* y;
@@ -63,6 +121,53 @@ int main(void) {
    return 0;
 }  /* main */
 
+/**
+ * Given a value to send and a worker to send the value to, send
+ * a message ordering the worker to compute whether the given value
+ * is prime. The special value '0' means that the worker should quit.
+ * The worker will send a message to the master with the verdict.
+ *
+ * @param worker  The worker to send the message to.
+ * @param val The value to examine.
+ */
+void send_work_command(int worker, double* matrix_and_vector, int data_to_send_dimension) {
+    // printf("send_work_command: worker=%d val=%lu\n", worker, val);
+    MPI_Send(matrix_and_vector, data_to_send_dimension, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
+}
+
+/**
+ * Given a result to send, send a message telling the master that
+ * the value it sent is prime or not. Note that the value for which the
+ * result has been computed is not sent, since nobody cares about it.
+ *
+ * @param result The result.
+ */
+void send_result(int result) {
+    MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+}
+
+/**
+ * Wait for the next value to compute. The value zero means that the worker should quit.
+ *
+ * @param val A pointer to the value to fill with the received value.
+ */
+void await_command(long int *val) {
+
+}
+
+
+/**
+ * Wait for the next result from a worker.
+ *
+ * @param worker A pointer to the variable that will hold the worker that sent the result.
+ * @param result A pointer to the variable that will hold the result.
+ */
+void await_result(int *worker, double *result) {
+    MPI_Status status;
+    MPI_Recv(result, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD,
+             &status);
+    *worker = status.MPI_SOURCE;
+}
 
 /*-------------------------------------------------------------------
  * Function:  Set_dims
@@ -271,3 +376,97 @@ double row_vec_mul(
         }
     return res;
 }  /* row_vec_mul */
+
+
+/**
+ * The code to run as master: send jobs to the workers, and await their replies.
+ * There are `worker_count` workers, numbered from 1 up to and including `worker_count`.
+ *
+ * @param worker_count The number of workers
+ * @param startval  The first value to examine.
+ * @param nval The number of values to examine.
+ * @return The number of values in the specified range.
+ */
+int *run_as_master(
+    int worker_count, 
+    int DIMENSION_SIZE, 
+    double *VECTOR_RESULT, 
+    double *VECTOR_V, 
+    double *MATRIX
+) {
+    int active_workers = 0, dimensions_sent = 0;
+    int *worker_dimension_mapping = (int*) malloc(sizeof(int) * worker_count);
+
+    // This variable will store the vector and the segment of the matrix to multiply
+    double* MATRIX_SEGMENT = (double *) malloc(sizeof(double) * DIMENSION_SIZE);
+    // memcpy(
+    //     MATRIX_SEGMENT,
+    //     VECTOR_V,
+    //     sizeof(double) * DIMENSION_SIZE
+    // );
+        
+    for (int worker = 1; worker <= worker_count && dimensions_sent < DIMENSION_SIZE; worker++) {
+        memcpy( // Get row of matrix to send to worker
+            MATRIX_SEGMENT, 
+            MATRIX + dimensions_sent * DIMENSION_SIZE, 
+            sizeof(double) * DIMENSION_SIZE
+        );
+        send_work_command(worker, MATRIX_SEGMENT, DIMENSION_SIZE);
+        worker_dimension_mapping[worker] = dimensions_sent;
+        active_workers++;
+        dimensions_sent++;
+    }
+    while (active_workers > 0) {
+        int worker;
+        double result;
+
+        await_result(&worker, &result);
+
+        int worker_done_dimension = worker_dimension_mapping[worker];
+        VECTOR_RESULT[worker_done_dimension] = result;
+
+        if (dimensions_sent < DIMENSION_SIZE) { // Send next dimension
+            memcpy( // Get row of matrix to send to worker
+                MATRIX_SEGMENT, 
+                MATRIX + dimensions_sent * DIMENSION_SIZE, 
+                sizeof(double) * DIMENSION_SIZE
+            );
+            send_work_command(worker, MATRIX_SEGMENT, DIMENSION_SIZE);
+            worker_dimension_mapping[worker] = dimensions_sent;
+            dimensions_sent++;
+        } else { // Turn off worker
+            double dummy = 0.0
+            send_work_command(worker, dummy, 1); 
+            active_workers--;
+        }
+    }
+    return VECTOR_RESULT;
+}
+
+/**
+ * The code to run as worker: receive jobs, execute them, and terminate when told to.
+ */
+void run_as_worker(int DIMENSION, double * VECTOR_V) {
+    MPI_Status status;
+    double * segment_and_vector;
+    while(true) {
+        MPI_Recv(
+            segment_and_vector, 
+            DIMENSION * 2, 
+            MPI_DOUBLE, 0, MPI_ANY_TAG, MPI_COMM_WORLD, 
+            &status
+        );
+
+        int size_of_segment;
+        MPI_Get_count(
+            status, MPI_DOUBLE, &size_of_segment
+        );
+        if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
+            break;  // The master told us to stop.
+        }
+
+        // Perform matrix multiplacion
+        double result = 1.0;
+        send_result(result);
+    }
+}
