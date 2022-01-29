@@ -141,7 +141,7 @@ int main2(void) {
  */
 void send_work_command(int worker, double* matrix_and_vector, int data_to_send_dimension) {
     // printf("send_work_command: worker=%d val=%lu\n", worker, val);
-    MPI_Send(matrix_and_vector, data_to_send_dimension, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
+    MPI_Send(&matrix_and_vector, data_to_send_dimension, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
 }
 
 void turn_off_worker(int worker) {
