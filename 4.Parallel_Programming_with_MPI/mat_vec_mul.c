@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     double* MATRIX;
     double* VECTOR_V;
     double* VECTOR_RESULT;
-    int DIMENSION_SIZE = 100; // N
+    int DIMENSION_SIZE = 10000; // N
 
     Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
 
@@ -79,14 +79,14 @@ int main(int argc, char *argv[]) {
         int workers = size - 1;
         // printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
-        double * r = run_as_master(
+        double * VECTOR_R = run_as_master(
             workers, 
             DIMENSION_SIZE,
             VECTOR_RESULT,
             VECTOR_V,
             MATRIX
         );
-        // Print_vector("R", r, DIMENSION_SIZE);
+        Print_vector("R", VECTOR_R, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
     } else {
@@ -476,8 +476,8 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
         }
 
         // Perform matrix multiplacion
-        double result2 = row_vec_mul(segment_and_vector, 0, VECTOR_V, DIMENSION);
+        double result = row_vec_mul(segment_and_vector, 0, VECTOR_V, DIMENSION);
 
-        send_result(result2);
+        send_result(result);
     }
 }
