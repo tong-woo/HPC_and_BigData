@@ -62,11 +62,8 @@ int main(int argc, char *argv[]) {
 
     Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
 
-    srand((unsigned)time(NULL));      //set seed to generate random nums
-    Build_matrix(MATRIX, DIMENSION_SIZE);        
+    srand((unsigned)time(NULL)); //set seed to generate random nums
     Build_vector(VECTOR_V, DIMENSION_SIZE);         
-
-    Print_matrix("M", MATRIX, DIMENSION_SIZE);  
     Print_vector("V", VECTOR_V, DIMENSION_SIZE);
 
     /* Start up MPI */
@@ -77,6 +74,8 @@ int main(int argc, char *argv[]) {
     const bool am_master = 0 == rank;
 
     if (am_master) {
+        Build_matrix(MATRIX, DIMENSION_SIZE);   
+        Print_matrix("M", MATRIX, DIMENSION_SIZE);      
         int workers = size - 1;
         printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
@@ -89,7 +88,7 @@ int main(int argc, char *argv[]) {
         );
         Print_vector("R", r, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
-        printf("Stopped as master. This took %.1f seconds\n", finish-start);
+        printf("Stopped as master. This took %.4f seconds\n", finish-start);
     } else {
         printf("Running as worker %d\n", rank);
         run_as_worker(DIMENSION_SIZE, VECTOR_V);
@@ -471,8 +470,10 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
             break;  // The master told us to stop.
         }
 
+        double result2 = row_vec_mul(segment_and_vector, 0, VECTOR_V, DIMENSION);
+
         // Perform matrix multiplacion
-        double result = 1.0;
-        send_result(result);
+        double result = 2.0;
+        send_result(result2);
     }
 }
