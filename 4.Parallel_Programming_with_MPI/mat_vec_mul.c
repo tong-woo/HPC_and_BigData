@@ -141,7 +141,7 @@ int main2(void) {
  */
 void send_work_command(int worker, double* matrix_and_vector, int data_to_send_dimension) {
     // printf("send_work_command: worker=%d val=%lu\n", worker, val);
-    MPI_Send(&matrix_and_vector, data_to_send_dimension, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
+    MPI_Send(matrix_and_vector, data_to_send_dimension, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
 }
 
 void turn_off_worker(int worker) {
@@ -158,7 +158,6 @@ void turn_off_worker(int worker) {
 void send_result(double result) {
     MPI_Send(&result, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
 }
-
 
 /**
  * Wait for the next result from a worker.
@@ -468,6 +467,8 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
         if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
             break;  // The master told us to stop.
         }
+
+        printf("ESTOY AQUI!");
 
         // Perform matrix multiplacion
         double result = 1.0;
