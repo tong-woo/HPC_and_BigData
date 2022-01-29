@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
     Build_matrix(MATRIX, DIMENSION_SIZE);        
     Build_vector(VECTOR_V, DIMENSION_SIZE);         
 
-    Print_matrix("MATRIX", MATRIX, DIMENSION_SIZE);  
-    Print_vector("VECTOR_V", VECTOR_V, DIMENSION_SIZE);
+    Print_matrix('M', MATRIX, DIMENSION_SIZE);  
+    Print_vector('V', VECTOR_V, DIMENSION_SIZE);
 
     /* Start up MPI */
     MPI_Init(&argc, &argv);
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
             VECTOR_V,
             MATRIX
         );
-        Print_vector("VECTOR_RESULT", r, DIMENSION_SIZE);
+        Print_vector('R', r, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.1f seconds\n", finish-start);
     } else {
@@ -116,9 +116,9 @@ int main2(void) {
    Allocate_dynamic_arrays(&A, &x, &y, N);
    srand((unsigned)time(NULL));      //set seed to generate random nums
    Build_matrix(A, N);               //Matrix array stored in A
-   Print_matrix("A", A, N);  
+   Print_matrix('A', A, N);  
    Build_vector(x, N);               //Vector array stored in x
-   Print_vector("x", x, N);
+   Print_vector('x', x, N);
    /*uncomment below to verify if the first element of y vector is the same as result value*/
    // Mat_vec_mul(A, x, y, N);
    // Print_vector("y", y, N);
@@ -212,9 +212,9 @@ void Allocate_dynamic_arrays(
     double**  y_pp  /* out */,    
     int       N     /* in  */) {
 
-        *A_pp = malloc(N*N*sizeof(double));
-        *x_pp = malloc(N*sizeof(double));
-        *y_pp = malloc(N*sizeof(double));
+        *A_pp = (double *) malloc(N*N*sizeof(double));
+        *x_pp = (double *) malloc(N*sizeof(double));
+        *y_pp = (double *) malloc(N*sizeof(double));
         if (!A_pp || !x_pp || !y_pp) {
         fprintf(stderr, "%s: memory exhausted\n", "mat_vec_mul.c");
         exit(1);
