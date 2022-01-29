@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     double* MATRIX;
     double* VECTOR_V;
     double* VECTOR_RESULT;
-    int DIMENSION_SIZE = 4; // N
+    int DIMENSION_SIZE = 100; // N
 
     Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
 
@@ -466,7 +466,6 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
             MPI_DOUBLE, 0, MPI_ANY_TAG, MPI_COMM_WORLD, 
             &status
         );
-        printf("ESTOY AQUI!");
 
         int size_of_segment;
         MPI_Get_count(
