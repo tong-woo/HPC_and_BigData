@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
     Build_matrix(MATRIX, DIMENSION_SIZE);        
     Build_vector(VECTOR_V, DIMENSION_SIZE);         
 
-    Print_matrix('M', MATRIX, DIMENSION_SIZE);  
-    Print_vector('V', VECTOR_V, DIMENSION_SIZE);
+    Print_matrix("M", MATRIX, DIMENSION_SIZE);  
+    Print_vector("V", VECTOR_V, DIMENSION_SIZE);
 
     /* Start up MPI */
     MPI_Init(&argc, &argv);
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
             VECTOR_V,
             MATRIX
         );
-        Print_vector('R', r, DIMENSION_SIZE);
+        Print_vector("R", r, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.1f seconds\n", finish-start);
     } else {
@@ -116,9 +116,9 @@ int main2(void) {
    Allocate_dynamic_arrays(&A, &x, &y, N);
    srand((unsigned)time(NULL));      //set seed to generate random nums
    Build_matrix(A, N);               //Matrix array stored in A
-   Print_matrix('A', A, N);  
+   Print_matrix("A", A, N);  
    Build_vector(x, N);               //Vector array stored in x
-   Print_vector('x', x, N);
+   Print_vector("x", x, N);
    /*uncomment below to verify if the first element of y vector is the same as result value*/
    // Mat_vec_mul(A, x, y, N);
    // Print_vector("y", y, N);
@@ -142,6 +142,10 @@ int main2(void) {
 void send_work_command(int worker, double* matrix_and_vector, int data_to_send_dimension) {
     // printf("send_work_command: worker=%d val=%lu\n", worker, val);
     MPI_Send(matrix_and_vector, data_to_send_dimension, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
+}
+
+void turn_off_worker(int worker) {
+    MPI_Send(0, 1, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
 }
 
 /**
@@ -435,8 +439,7 @@ double *run_as_master(
             worker_dimension_mapping[worker] = dimensions_sent;
             dimensions_sent++;
         } else { // Turn off worker
-            double dummy = 0.0;
-            send_work_command(worker, dummy, 1); 
+            turn_off_worker(worker); 
             active_workers--;
         }
     }
