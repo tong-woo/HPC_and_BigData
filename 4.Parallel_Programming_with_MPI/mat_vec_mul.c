@@ -29,7 +29,6 @@
 #include <string.h> 
 
 /*---------implicit declaration of functions not allowed(C99)--------*/
-
 void Set_dims(int* n_p , int* N_p );
 void Allocate_dynamic_arrays(double** A_pp, double** x_pp, 
      double** y_pp, int N);
@@ -79,15 +78,22 @@ int main(int argc, char *argv[]) {
         // Print_matrix("M", MATRIX, DIMENSION_SIZE);      
         int workers = size - 1;
         // printf("Running as master with %d workers\n", workers);
-        const double start = MPI_Wtime();
-        double * VECTOR_R = run_as_master(
-            workers, 
-            DIMENSION_SIZE,
-            VECTOR_RESULT,
-            VECTOR_V,
-            MATRIX,
-            true
-        );
+	const double start = MPI_Wtime();
+	int R = 50;
+	bool is_last_iteration = false;
+	for(int i=1; i<=R; i++)
+	{
+	    if(i==R)
+		is_last_iteration = true;
+            double * VECTOR_R = run_as_master(
+                workers, 
+                DIMENSION_SIZE,
+                VECTOR_RESULT,
+                VECTOR_V,
+                MATRIX,
+                is_last_iteration
+            );
+	}
         //Print_vector("R", VECTOR_R, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
@@ -207,7 +213,7 @@ void Set_dims(
 /*-------------------------------------------------------------------
  * Function:   Allocate_dynamic_arrays
  * Purpose:    Allocate memory for A, x, and y, they are 
- *             ud=sing dynamic arrays
+ *             using dynamic arrays
  * In args:    N:    number of rows in x
  * Out args:   A_pp: pointer to memory adress for matrix 
  *             x_pp: pointer to memory adress for x 
@@ -455,6 +461,7 @@ double *run_as_master(
             active_workers--;
         }
     }
+    VECTOR_V = VECTOR_RESULT;
     return VECTOR_RESULT;
 }
 
