@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 
     srand((unsigned)time(NULL)); //set seed to generate random nums
     Build_vector(VECTOR_V, DIMENSION_SIZE);         
-    Print_vector("V", VECTOR_V, DIMENSION_SIZE);
+    // Print_vector("V", VECTOR_V, DIMENSION_SIZE);
 
     /* Start up MPI */
     MPI_Init(&argc, &argv);
@@ -75,9 +75,9 @@ int main(int argc, char *argv[]) {
 
     if (am_master) {
         Build_matrix(MATRIX, DIMENSION_SIZE);   
-        Print_matrix("M", MATRIX, DIMENSION_SIZE);      
+        // Print_matrix("M", MATRIX, DIMENSION_SIZE);      
         int workers = size - 1;
-        printf("Running as master with %d workers\n", workers);
+        // printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
         double * r = run_as_master(
             workers, 
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
             VECTOR_V,
             MATRIX
         );
-        Print_vector("R", r, DIMENSION_SIZE);
+        // Print_vector("R", r, DIMENSION_SIZE);
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
     } else {
@@ -115,9 +115,9 @@ int main2(void) {
    Allocate_dynamic_arrays(&A, &x, &y, N);
    srand((unsigned)time(NULL));      //set seed to generate random nums
    Build_matrix(A, N);               //Matrix array stored in A
-   Print_matrix("A", A, N);  
+   // Print_matrix("A", A, N);  
    Build_vector(x, N);               //Vector array stored in x
-   Print_vector("x", x, N);
+   // Print_vector("x", x, N);
    /*uncomment below to verify if the first element of y vector is the same as result value*/
    // Mat_vec_mul(A, x, y, N);
    // Print_vector("y", y, N);
@@ -420,13 +420,13 @@ double *run_as_master(
             MATRIX + dimensions_sent * DIMENSION_SIZE, 
             sizeof(double) * DIMENSION_SIZE
         );
-        Print_vector("Z", MATRIX_SEGMENT, DIMENSION_SIZE);
+        // Print_vector("Z", MATRIX_SEGMENT, DIMENSION_SIZE);
         send_work_command(worker, MATRIX_SEGMENT, DIMENSION_SIZE);
         worker_dimension_mapping[worker] = dimensions_sent;
         active_workers++;
         dimensions_sent++;
     }
-    printf("Master sent all work...");
+    // printf("Master sent all work...");
     while (active_workers > 0) {
         int worker;
         double result;
@@ -475,10 +475,9 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
             break;  // The master told us to stop.
         }
 
+        // Perform matrix multiplacion
         double result2 = row_vec_mul(segment_and_vector, 0, VECTOR_V, DIMENSION);
 
-        // Perform matrix multiplacion
-        double result = 2.0;
         send_result(result2);
     }
 }
