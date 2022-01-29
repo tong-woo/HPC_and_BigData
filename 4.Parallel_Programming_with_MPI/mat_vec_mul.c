@@ -142,17 +142,8 @@ void send_work_command(int worker, double* matrix_and_vector, int data_to_send_d
  *
  * @param result The result.
  */
-void send_result(int result) {
-    MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-}
-
-/**
- * Wait for the next value to compute. The value zero means that the worker should quit.
- *
- * @param val A pointer to the value to fill with the received value.
- */
-void await_command(long int *val) {
-
+void send_result(double result) {
+    MPI_Send(&result, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
 }
 
 
@@ -164,7 +155,7 @@ void await_command(long int *val) {
  */
 void await_result(int *worker, double *result) {
     MPI_Status status;
-    MPI_Recv(result, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD,
+    MPI_Recv(result, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD,
              &status);
     *worker = status.MPI_SOURCE;
 }
