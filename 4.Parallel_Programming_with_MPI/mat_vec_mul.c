@@ -145,7 +145,7 @@ void send_work_command(int worker, double* matrix_and_vector, int data_to_send_d
 }
 
 void turn_off_worker(int worker) {
-    MPI_Send(0, 1, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
+    MPI_Send(0.0, 1, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
 }
 
 /**
@@ -420,6 +420,7 @@ double *run_as_master(
         active_workers++;
         dimensions_sent++;
     }
+    printf("Master sent all work...");
     while (active_workers > 0) {
         int worker;
         double result;
@@ -459,6 +460,7 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
             MPI_DOUBLE, 0, MPI_ANY_TAG, MPI_COMM_WORLD, 
             &status
         );
+        printf("ESTOY AQUI!");
 
         int size_of_segment;
         MPI_Get_count(
@@ -467,8 +469,6 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
         if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
             break;  // The master told us to stop.
         }
-
-        printf("ESTOY AQUI!");
 
         // Perform matrix multiplacion
         double result = 1.0;
