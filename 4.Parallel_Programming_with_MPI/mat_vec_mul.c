@@ -415,6 +415,7 @@ double *run_as_master(
             MATRIX + dimensions_sent * DIMENSION_SIZE, 
             sizeof(double) * DIMENSION_SIZE
         );
+        Print_vector('Z', MATRIX_SEGMENT, DIMENSION_SIZE);
         send_work_command(worker, MATRIX_SEGMENT, DIMENSION_SIZE);
         worker_dimension_mapping[worker] = dimensions_sent;
         active_workers++;
