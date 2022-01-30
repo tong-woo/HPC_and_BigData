@@ -553,3 +553,4 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
         free(result);
     }
 }
+
