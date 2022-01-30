@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #SBATCH -t 1:10 
-#SBATCH -N 2 --ntasks=1
+#SBATCH -N 1 -n=1
 #SBATCH --cpus-per-task=16
 #SBATCH --partition=normal
 
