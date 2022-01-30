@@ -419,7 +419,8 @@ double *run_as_master(
         VECTOR_V, 
         DIMENSION_SIZE, 
         MPI_DOUBLE,  
-        0, MPI_COMM_WORLD
+        0, 
+        MPI_COMM_WORLD
     );
     int active_workers = 0, dimensions_sent = 0;
     int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
@@ -435,11 +436,11 @@ double *run_as_master(
         if ((dimensions_sent + block_size) > DIMENSION_SIZE){
             worker_block_size = DIMENSION_SIZE - dimensions_sent;
         }
-        memcpy( // Get row of matrix to send to worker
-            MATRIX_SEGMENT, 
-            MATRIX + dimensions_sent * DIMENSION_SIZE, 
-            sizeof(double) * DIMENSION_SIZE * worker_block_size
-        );
+        // memcpy( // Get row of matrix to send to worker
+        //     MATRIX_SEGMENT, 
+        //     MATRIX + dimensions_sent * DIMENSION_SIZE, 
+        //     sizeof(double) * DIMENSION_SIZE * worker_block_size
+        // );
         // Print_vector("Z", MATRIX_SEGMENT, DIMENSION_SIZE);
 
         MPI_Send(
@@ -467,7 +468,8 @@ double *run_as_master(
         block_size * DIMENSION_SIZE,
         MPI_DOUBLE,
         MATRIX_SEGMENT, 0, MPI_DOUBLE, 
-        0, MPI_COMM_WORLD
+        0, 
+        MPI_COMM_WORLD
     );
 
     // printf("Master sent all work...");
@@ -523,14 +525,15 @@ void run_as_worker(int DIMENSION) {
     double * VECTOR_V = (double *) malloc (DIMENSION * sizeof(double));
 
     while (true){
-
+        printf("1");
         MPI_Bcast(
             VECTOR_V, 
             DIMENSION, 
             MPI_DOUBLE,  
-            0, MPI_COMM_WORLD
+            0, 
+            MPI_COMM_WORLD
         );
-
+        printf("2");
         MPI_Recv(
             &block_size,
             1,
@@ -541,6 +544,8 @@ void run_as_worker(int DIMENSION) {
 
         double * MATRIX_BLOCK = (double *) malloc( DIMENSION * block_size * sizeof(double));
         double * result = (double *) malloc (block_size * sizeof(double));
+
+        printf("3");
 
         MPI_Scatter(
             MATRIX_BLOCK, 1, MPI_DOUBLE,
