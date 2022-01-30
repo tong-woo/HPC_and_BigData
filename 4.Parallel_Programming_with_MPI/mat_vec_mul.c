@@ -44,18 +44,28 @@ int main(void) {
    double* A;
    double* x;
    double* y;
-   int n, N;
+   int n;
    double result;
-   Set_dims(&n, &N);                 //Hover on the functions to see details
+   int start, end;
+   int R = 100;
+   int N = 10000;
+//    Set_dims(&n, &N);                 //Hover on the functions to see details
    Allocate_dynamic_arrays(&A, &x, &y, N);
     //set seed to generate random nums
    Build_matrix(A, N);               //Matrix array stored in A
-   Print_matrix("A", A, N);  
+//    Print_matrix("A", A, N);  
    Build_vector(x, N);               //Vector array stored in x
-   Print_vector("x", x, N);
+//    Print_vector("x", x, N);
    /*uncomment below to verify if the first element of y vector is the same as result value*/
-   Mat_vec_mul(A, x, y, N);
-   Print_vector("y", y, N);
+   start = omp_get_wtime();
+   for(int i=0;i < R;i++){
+       Mat_vec_mul(A, x, y, N);
+       x = y;
+   }
+   end  = omp_get_wtime();
+   printf("Time estimate: %.20f", end-start);
+
+//    Print_vector("y", y, N);
    // result = row_vec_mul(A, 0, x, N); // Now the product of vectors(A[0] and X) has been stored in result
 //    printf("\n%f ", result);
    free(A);
@@ -235,7 +245,6 @@ void Mat_vec_mul(
         #pragma omp parallel for
         for (i = 0; i < N; i++) {
             y[i] = 0.0;
-            #pragma omp parallel for reduction(+:y[i])
             for (j = 0; j < N; j++){
                 y[i] += A[i*N+j]*x[j];
             }
