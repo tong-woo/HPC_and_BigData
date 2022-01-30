@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
                     MATRIX,
                     is_last_iteration
                 );
-                Print_vector("R", VECTOR_R, DIMENSION_SIZE);
+                // Print_vector("R", VECTOR_R, DIMENSION_SIZE);
         }
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
