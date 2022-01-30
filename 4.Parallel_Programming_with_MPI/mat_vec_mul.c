@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
         int workers = size - 1;
         printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
-        int R = 100;
+        int R = 2;
         bool is_last_iteration = false;
         for(int i=1; i<=R; i++) {
                 if(i==R) is_last_iteration = true;
@@ -521,10 +521,12 @@ double *run_as_master(
  * The code to run as worker: receive jobs, execute them, and terminate when told to.
  */
 void run_as_worker(int DIMENSION) {
+    printf("wut");
     MPI_Status status;
     int block_size = 0;
     double * VECTOR_V = (double *) malloc (DIMENSION * sizeof(double));
 
+    printf("AJA");
     while (true){
         printf("1");
         MPI_Bcast(
