@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <omp.h>
 /*---------implicit declaration of functions not allowed(C99)--------*/
 
 void Set_dims(int* n_p , int* N_p );
@@ -54,10 +54,10 @@ int main(void) {
    Build_vector(x, N);               //Vector array stored in x
    Print_vector("x", x, N);
    /*uncomment below to verify if the first element of y vector is the same as result value*/
-   // Mat_vec_mul(A, x, y, N);
-   // Print_vector("y", y, N);
-   result = row_vec_mul(A, 0, x, N); // Now the product of vectors(A[0] and X) has been stored in result
-   printf("\n%f ", result);
+   Mat_vec_mul(A, x, y, N);
+   Print_vector("y", y, N);
+   // result = row_vec_mul(A, 0, x, N); // Now the product of vectors(A[0] and X) has been stored in result
+//    printf("\n%f ", result);
    free(A);
    free(x);
    free(y);
@@ -232,9 +232,10 @@ void Mat_vec_mul(
     double    y[]  /* out */,
     int       N    /* in  */){
         int i, j;
-        
+        #pragma omp parallel for
         for (i = 0; i < N; i++) {
             y[i] = 0.0;
+            #pragma omp parallel for reduction(+:y[i])
             for (j = 0; j < N; j++){
                 y[i] += A[i*N+j]*x[j];
             }
