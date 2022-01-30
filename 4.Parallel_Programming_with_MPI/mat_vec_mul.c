@@ -469,10 +469,10 @@ double *run_as_master(
             MPI_DOUBLE, MPI_ANY_SOURCE, 
             TAG_RESULT, MPI_COMM_WORLD, &status
         );
-        *worker = status.MPI_SOURCE;
+        worker = status.MPI_SOURCE;
 
         memcpy( // Get row of matrix to send to worker
-            VECTOR_RESULT[worker_block_start[worker]], 
+            VECTOR_RESULT + worker_block_start[worker], 
             result, 
             sizeof(double) * worker_block_sizes[worker]
         );
