@@ -48,7 +48,7 @@ double *run_as_master(
     double *MATRIX,
     bool last_iteration
 );
-void run_as_worker(int DIMENSION, double * VECTOR_V);
+void run_as_worker(int DIMENSION);
 
 int TAG_DIMENSION = 1;
 int TAG_VECTOR_V = 2;
@@ -59,13 +59,13 @@ int TAG_MATRIX_BLOCK = 4;
 /*--------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
 
+    int rank;
+    int size;
+
     /* Start up MPI */
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-    int rank;
-    int size;
 
     int DIMENSION_SIZE = 10000; // N
     double MATRIX[DIMENSION_SIZE][DIMENSION_SIZE];
@@ -77,11 +77,12 @@ int main(int argc, char *argv[]) {
     const bool am_master = 0 == rank;
 
     if (am_master) {
-        printf("Running as master with %d workers\n", workers);
+        printf("Running as master");
         Build_matrix((double *)MATRIX, DIMENSION_SIZE);
         printf("Matrix built");       
         Build_vector(VECTOR_V, DIMENSION_SIZE);            
         int workers = size - 1;
+        printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
         int R = 100;
         bool is_last_iteration = false;
@@ -95,7 +96,7 @@ int main(int argc, char *argv[]) {
                     (double*) MATRIX,
                     is_last_iteration
                 );
-                VECTOR_V = VECTOR_R;
+                //VECTOR_V = VECTOR_R;
                 // Print_vector("R", VECTOR_R, DIMENSION_SIZE);
         }
         const double finish = MPI_Wtime();
@@ -519,12 +520,13 @@ double *run_as_master(
 void run_as_worker(int DIMENSION) {
     MPI_Status status;
     int block_size = 0;
+    double * VECTOR_V = (double *) malloc (DIMENSION * sizeof(double));
 
     while (true){
 
         MPI_Bcast(
             VECTOR_V, 
-            DIMENSION_SIZE, 
+            DIMENSION, 
             MPI_DOUBLE,  
             0, MPI_COMM_WORLD
         );
@@ -537,7 +539,6 @@ void run_as_worker(int DIMENSION) {
             &status
         );
 
-        double * VECTOR_V = (double *) malloc (DIMENSION * sizeof(double));
         double * MATRIX_BLOCK = (double *) malloc( DIMENSION * block_size * sizeof(double));
         double * result = (double *) malloc (block_size * sizeof(double));
 
