@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
 
     const bool am_master = 0 == rank;
 
+    printf("Running");
     if (am_master) {
         printf("Running as master");
         Build_matrix((double *)MATRIX, DIMENSION_SIZE);
