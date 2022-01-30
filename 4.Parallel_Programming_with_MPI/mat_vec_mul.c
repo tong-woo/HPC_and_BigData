@@ -388,6 +388,7 @@ double row_vec_mul(
         }
         int j;
         double res = 0.0; /* out  */
+        #pragma opm parallel for reduction(+:res)
         for (j = 0; j < N; j++){
             res += A[row*N+j]*x[j];
         }
@@ -534,6 +535,7 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
         // }
 
         // Perform matrix multiplacion
+        #pragma opm parallel for
         for (int i = 0; i < block_size; i ++){
             result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V, DIMENSION);
         }
