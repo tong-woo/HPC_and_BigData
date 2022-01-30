@@ -56,6 +56,86 @@ int TAG_RESULT = 3;
 int TAG_MATRIX_BLOCK = 4;
 
 
+/**
+ * The code to run as worker: receive jobs, execute them, and terminate when told to.
+ */
+void run_as_worker(int DIMENSION) {
+    printf("wut");
+    MPI_Status status;
+    int block_size = 0;
+    double * VECTOR_V = (double *) malloc (DIMENSION * sizeof(double));
+
+    printf("AJA");
+    while (true){
+        printf("1");
+        MPI_Bcast(
+            VECTOR_V, 
+            DIMENSION, 
+            MPI_DOUBLE,  
+            0, 
+            MPI_COMM_WORLD
+        );
+        printf("2");
+        MPI_Recv(
+            &block_size,
+            1,
+            MPI_INT, 0, 
+            TAG_DIMENSION, MPI_COMM_WORLD,
+            &status
+        );
+
+        double * MATRIX_BLOCK = (double *) malloc( DIMENSION * block_size * sizeof(double));
+        double * result = (double *) malloc (block_size * sizeof(double));
+
+        printf("3");
+
+        MPI_Scatter(
+            MATRIX_BLOCK, 1, MPI_DOUBLE,
+            MATRIX_BLOCK, 
+            DIMENSION * block_size, 
+            MPI_DOUBLE, 
+            0, 
+            MPI_COMM_WORLD
+        );
+
+        // MPI_Recv(
+        //     MATRIX_BLOCK, 
+        //     DIMENSION * block_size, 
+        //     MPI_DOUBLE, 0, 
+        //     TAG_MATRIX_BLOCK, MPI_COMM_WORLD, 
+        //     &status
+        // );
+
+        // int size_of_segment;
+        // MPI_Get_count(
+        //     &status, MPI_DOUBLE, &size_of_segment
+        // );
+        // if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
+        //     break;  // The master told us to stop.
+        // }
+
+        // Perform matrix multiplacion
+        #pragma opm parallel for
+        for (int i = 0; i < block_size; i ++){
+            result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V, DIMENSION);
+        }
+
+        MPI_Send(
+            result, 
+            block_size, 
+            MPI_DOUBLE, 0, 
+            TAG_RESULT, 
+            MPI_COMM_WORLD
+        );
+
+        free(MATRIX_BLOCK);
+        free(result);
+    }
+}
+
+
+
+
 /*--------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
 
@@ -516,81 +596,3 @@ double *run_as_master(
     }
     return VECTOR_RESULT;
 }
-
-/**
- * The code to run as worker: receive jobs, execute them, and terminate when told to.
- */
-void run_as_worker(int DIMENSION) {
-    printf("wut");
-    MPI_Status status;
-    int block_size = 0;
-    double * VECTOR_V = (double *) malloc (DIMENSION * sizeof(double));
-
-    printf("AJA");
-    while (true){
-        printf("1");
-        MPI_Bcast(
-            VECTOR_V, 
-            DIMENSION, 
-            MPI_DOUBLE,  
-            0, 
-            MPI_COMM_WORLD
-        );
-        printf("2");
-        MPI_Recv(
-            &block_size,
-            1,
-            MPI_INT, 0, 
-            TAG_DIMENSION, MPI_COMM_WORLD,
-            &status
-        );
-
-        double * MATRIX_BLOCK = (double *) malloc( DIMENSION * block_size * sizeof(double));
-        double * result = (double *) malloc (block_size * sizeof(double));
-
-        printf("3");
-
-        MPI_Scatter(
-            MATRIX_BLOCK, 1, MPI_DOUBLE,
-            MATRIX_BLOCK, 
-            DIMENSION * block_size, 
-            MPI_DOUBLE, 
-            0, 
-            MPI_COMM_WORLD
-        );
-
-        // MPI_Recv(
-        //     MATRIX_BLOCK, 
-        //     DIMENSION * block_size, 
-        //     MPI_DOUBLE, 0, 
-        //     TAG_MATRIX_BLOCK, MPI_COMM_WORLD, 
-        //     &status
-        // );
-
-        // int size_of_segment;
-        // MPI_Get_count(
-        //     &status, MPI_DOUBLE, &size_of_segment
-        // );
-        // if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
-        //     break;  // The master told us to stop.
-        // }
-
-        // Perform matrix multiplacion
-        #pragma opm parallel for
-        for (int i = 0; i < block_size; i ++){
-            result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V, DIMENSION);
-        }
-
-        MPI_Send(
-            result, 
-            block_size, 
-            MPI_DOUBLE, 0, 
-            TAG_RESULT, 
-            MPI_COMM_WORLD
-        );
-
-        free(MATRIX_BLOCK);
-        free(result);
-    }
-}
-
