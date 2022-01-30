@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     const bool am_master = 0 == rank;
 
-    printf("Running");
+    printf("Running!!!!!!!!!!");
     if (am_master) {
         printf("Running as master");
         Build_matrix((double *)MATRIX, DIMENSION_SIZE);
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
     } else {
-        printf("Running as worker %d\n", rank);
+        printf("Running as workerF %d\n", rank);
         run_as_worker(DIMENSION_SIZE);
         printf("Stopped as worker %d\n", rank);
     }
