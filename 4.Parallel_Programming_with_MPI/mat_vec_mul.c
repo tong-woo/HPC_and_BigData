@@ -27,6 +27,7 @@
 #include <math.h>
 #include <time.h>
 #include <string.h> 
+#include <omp.h>
 
 /*---------implicit declaration of functions not allowed(C99)--------*/
 void Set_dims(int* n_p , int* N_p );
