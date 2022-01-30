@@ -58,32 +58,30 @@ int TAG_MATRIX_BLOCK = 4;
 
 /*--------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
-    int rank;
-    int size;
-
-    double* MATRIX;
-    double* VECTOR_V;
-    double* VECTOR_RESULT;
-    int DIMENSION_SIZE = 10000; // N
-
-    Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
-
-    srand((unsigned)time(NULL)); //set seed to generate random nums
-    Build_vector(VECTOR_V, DIMENSION_SIZE);         
-    // Print_vector("V", VECTOR_V, DIMENSION_SIZE);
 
     /* Start up MPI */
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
+    int rank;
+    int size;
+
+    int DIMENSION_SIZE = 10000; // N
+    double MATRIX[DIMENSION_SIZE][DIMENSION_SIZE];
+    double VECTOR_V[DIMENSION_SIZE];
+    double VECTOR_RESULT[DIMENSION_SIZE];
+
+    srand((unsigned)time(NULL)); //set seed to generate random nums
+
     const bool am_master = 0 == rank;
 
     if (am_master) {
-        Build_matrix(MATRIX, DIMENSION_SIZE);   
-        // Print_matrix("M", MATRIX, DIMENSION_SIZE);      
+        printf("Running as master with %d workers\n", workers);
+        Build_matrix((double *)MATRIX, DIMENSION_SIZE);
+        printf("Matrix built");       
+        Build_vector(VECTOR_V, DIMENSION_SIZE);            
         int workers = size - 1;
-        // printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
         int R = 100;
         bool is_last_iteration = false;
@@ -94,16 +92,17 @@ int main(int argc, char *argv[]) {
                     DIMENSION_SIZE,
                     VECTOR_RESULT,
                     VECTOR_V,
-                    MATRIX,
+                    (double*) MATRIX,
                     is_last_iteration
                 );
+                VECTOR_V = VECTOR_R;
                 // Print_vector("R", VECTOR_R, DIMENSION_SIZE);
         }
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
     } else {
         printf("Running as worker %d\n", rank);
-        run_as_worker(DIMENSION_SIZE, VECTOR_V);
+        run_as_worker(DIMENSION_SIZE);
         printf("Stopped as worker %d\n", rank);
     }
 
@@ -414,6 +413,13 @@ double *run_as_master(
     double *MATRIX,
     bool last_iteration
 ) {
+
+    MPI_Bcast(
+        VECTOR_V, 
+        DIMENSION_SIZE, 
+        MPI_DOUBLE,  
+        0, MPI_COMM_WORLD
+    );
     int active_workers = 0, dimensions_sent = 0;
     int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
     int *worker_block_sizes = (int*) malloc(sizeof(int) * worker_count);
@@ -442,18 +448,26 @@ double *run_as_master(
             TAG_DIMENSION, MPI_COMM_WORLD
         );
 
-        MPI_Send(
-            MATRIX_SEGMENT, 
-            DIMENSION_SIZE * worker_block_size, 
-            MPI_DOUBLE, worker, 
-            TAG_MATRIX_BLOCK, MPI_COMM_WORLD
-        );
+        // MPI_Send(
+        //     MATRIX_SEGMENT, 
+        //     DIMENSION_SIZE * worker_block_size, 
+        //     MPI_DOUBLE, worker, 
+        //     TAG_MATRIX_BLOCK, MPI_COMM_WORLD
+        // );
 
         worker_block_start[worker] = dimensions_sent;
         worker_block_sizes[worker] = worker_block_size;
         active_workers++;
         dimensions_sent += worker_block_size;
     }
+
+    MPI_Scatter(
+        MATRIX,
+        block_size * DIMENSION_SIZE,
+        MPI_DOUBLE,
+        MATRIX_SEGMENT, 0, MPI_DOUBLE, 
+        0, MPI_COMM_WORLD
+    );
 
     // printf("Master sent all work...");
     while (active_workers > 0) {
@@ -496,18 +510,25 @@ double *run_as_master(
         //     active_workers--;
         // }
     }
-    VECTOR_V = VECTOR_RESULT;
     return VECTOR_RESULT;
 }
 
 /**
  * The code to run as worker: receive jobs, execute them, and terminate when told to.
  */
-void run_as_worker(int DIMENSION, double * VECTOR_V) {
+void run_as_worker(int DIMENSION) {
     MPI_Status status;
     int block_size = 0;
 
     while (true){
+
+        MPI_Bcast(
+            VECTOR_V, 
+            DIMENSION_SIZE, 
+            MPI_DOUBLE,  
+            0, MPI_COMM_WORLD
+        );
+
         MPI_Recv(
             &block_size,
             1,
@@ -516,16 +537,26 @@ void run_as_worker(int DIMENSION, double * VECTOR_V) {
             &status
         );
 
+        double * VECTOR_V = (double *) malloc (DIMENSION * sizeof(double));
         double * MATRIX_BLOCK = (double *) malloc( DIMENSION * block_size * sizeof(double));
         double * result = (double *) malloc (block_size * sizeof(double));
 
-        MPI_Recv(
+        MPI_Scatter(
+            MATRIX_BLOCK, 1, MPI_DOUBLE,
             MATRIX_BLOCK, 
             DIMENSION * block_size, 
-            MPI_DOUBLE, 0, 
-            TAG_MATRIX_BLOCK, MPI_COMM_WORLD, 
-            &status
+            MPI_DOUBLE, 
+            0, 
+            MPI_COMM_WORLD
         );
+
+        // MPI_Recv(
+        //     MATRIX_BLOCK, 
+        //     DIMENSION * block_size, 
+        //     MPI_DOUBLE, 0, 
+        //     TAG_MATRIX_BLOCK, MPI_COMM_WORLD, 
+        //     &status
+        // );
 
         // int size_of_segment;
         // MPI_Get_count(

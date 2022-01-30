@@ -9,7 +9,7 @@ JUNK +=
 CFLAGS += -O3 -Wall -W --std=c11 -lm -Wno-cast-function-type
 CXXFLAGS += -O3 -Wall -W --std=c++11 -lm -Wno-cast-function-type
 OMP_CFLAGS = $(CFLAGS) -fopenmp
-MPI_CFLAGS = $(CXXFLAGS) -lmpi -fopenmp
+MPI_CFLAGS = $(CXXFLAGS) -lmpi -openmp
 
 help:
 	@echo "help\tShow this help text"
