@@ -49,6 +49,11 @@ double *run_as_master(
 );
 void run_as_worker(int DIMENSION, double * VECTOR_V);
 
+int TAG_DIMENSION = 1;
+int TAG_VECTOR_V = 2;
+int TAG_RESULT = 3;
+int TAG_MATRIX_BLOCK = 4;
+
 
 /*--------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
@@ -170,7 +175,7 @@ void turn_off_worker(int worker) {
  * @param result The result.
  */
 void send_result(double result) {
-    MPI_Send(&result, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+    
 }
 
 /**
@@ -179,11 +184,8 @@ void send_result(double result) {
  * @param worker A pointer to the variable that will hold the worker that sent the result.
  * @param result A pointer to the variable that will hold the result.
  */
-void await_result(int *worker, double *result) {
-    MPI_Status status;
-    MPI_Recv(result, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD,
-             &status);
-    *worker = status.MPI_SOURCE;
+void await_result(int *worker, double *result, int worker_block_size) {
+
 }
 
 /*-------------------------------------------------------------------
@@ -413,53 +415,86 @@ double *run_as_master(
     bool last_iteration
 ) {
     int active_workers = 0, dimensions_sent = 0;
-    int *worker_dimension_mapping = (int*) malloc(sizeof(int) * worker_count);
+    int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
+    int *worker_block_sizes = (int*) malloc(sizeof(int) * worker_count);
 
-    // This variable will store the vector and the segment of the matrix to multiply
-    double* MATRIX_SEGMENT = (double *) malloc(sizeof(double) * DIMENSION_SIZE);
-    // memcpy(
-    //     MATRIX_SEGMENT,
-    //     VECTOR_V,
-    //     sizeof(double) * DIMENSION_SIZE
-    // );
+    int block_size = ceil(DIMENSION_SIZE / worker_count);
+
+    // This variable will store the segment of the matrix to multiply
+    double* MATRIX_SEGMENT = (double *) malloc(sizeof(double) * DIMENSION_SIZE * block_size);
         
     for (int worker = 1; worker <= worker_count && dimensions_sent < DIMENSION_SIZE; worker++) {
+        int worker_block_size = block_size;
+        if ((dimensions_sent + block_size) > DIMENSION_SIZE){
+            worker_block_size = DIMENSION_SIZE - dimensions_sent;
+        }
         memcpy( // Get row of matrix to send to worker
             MATRIX_SEGMENT, 
             MATRIX + dimensions_sent * DIMENSION_SIZE, 
-            sizeof(double) * DIMENSION_SIZE
+            sizeof(double) * DIMENSION_SIZE * worker_block_size
         );
         // Print_vector("Z", MATRIX_SEGMENT, DIMENSION_SIZE);
-        send_work_command(worker, MATRIX_SEGMENT, DIMENSION_SIZE);
-        worker_dimension_mapping[worker] = dimensions_sent;
+
+        MPI_Send(
+            &worker_block_size, 
+            1, 
+            MPI_INT, worker, 
+            TAG_DIMENSION, MPI_COMM_WORLD
+        );
+
+        MPI_Send(
+            MATRIX_SEGMENT, 
+            DIMENSION_SIZE * worker_block_size, 
+            MPI_DOUBLE, worker, 
+            TAG_MATRIX_BLOCK, MPI_COMM_WORLD
+        );
+
+        worker_block_start[worker] = dimensions_sent;
+        worker_block_sizes[worker] = worker_block_size;
         active_workers++;
-        dimensions_sent++;
+        dimensions_sent += worker_block_size;
     }
+
     // printf("Master sent all work...");
     while (active_workers > 0) {
         int worker;
-        double result;
+        double * result = (double *) malloc(sizeof(double) * block_size);
 
-        await_result(&worker, &result);
+        // await_result(&worker, result, worker_block_sizes[worker]);
 
-        int worker_done_dimension = worker_dimension_mapping[worker];
-        VECTOR_RESULT[worker_done_dimension] = result;
+        MPI_Status status;
+        MPI_Recv(
+            result, 
+            block_size, // last iteration ?? 
+            MPI_DOUBLE, MPI_ANY_SOURCE, 
+            TAG_RESULT, MPI_COMM_WORLD, &status
+        );
+        *worker = status.MPI_SOURCE;
 
-        if (dimensions_sent < DIMENSION_SIZE) { // Send next dimension
-            memcpy( // Get row of matrix to send to worker
-                MATRIX_SEGMENT, 
-                MATRIX + dimensions_sent * DIMENSION_SIZE, 
-                sizeof(double) * DIMENSION_SIZE
-            );
-            send_work_command(worker, MATRIX_SEGMENT, DIMENSION_SIZE);
-            worker_dimension_mapping[worker] = dimensions_sent;
-            dimensions_sent++;
-        } else { // Turn off worker
-            if (last_iteration){
-                turn_off_worker(worker); 
-            }
-            active_workers--;
-        }
+        memcpy( // Get row of matrix to send to worker
+            VECTOR_RESULT[worker_block_start[worker]], 
+            result, 
+            sizeof(double) * worker_block_sizes[worker]
+        );
+
+        //turn_off_worker(worker);
+        active_workers--;
+
+        // if (dimensions_sent < DIMENSION_SIZE) { // Send next dimension
+        //     memcpy( // Get row of matrix to send to worker
+        //         MATRIX_SEGMENT, 
+        //         MATRIX + dimensions_sent * DIMENSION_SIZE, 
+        //         sizeof(double) * DIMENSION_SIZE
+        //     );
+        //     send_work_command(worker, MATRIX_SEGMENT, DIMENSION_SIZE);
+        //     worker_dimension_mapping[worker] = dimensions_sent;
+        //     dimensions_sent++;
+        // } else { // Turn off worker
+        //     if (last_iteration){
+        //         turn_off_worker(worker); 
+        //     }
+        //     active_workers--;
+        // }
     }
     VECTOR_V = VECTOR_RESULT;
     return VECTOR_RESULT;
@@ -470,26 +505,50 @@ double *run_as_master(
  */
 void run_as_worker(int DIMENSION, double * VECTOR_V) {
     MPI_Status status;
-    double * segment_and_vector = (double *) malloc( DIMENSION * sizeof(double));
-    while(true) {
+    int block_size = 0;
+
+    while (true){
         MPI_Recv(
-            segment_and_vector, 
-            DIMENSION, 
-            MPI_DOUBLE, 0, MPI_ANY_TAG, MPI_COMM_WORLD, 
+            &block_size,
+            1,
+            MPI_INT, 0, 
+            TAG_DIMENSION, MPI_COMM_WORLD,
             &status
         );
 
-        int size_of_segment;
-        MPI_Get_count(
-            &status, MPI_DOUBLE, &size_of_segment
+        double * MATRIX_BLOCK = (double *) malloc( DIMENSION * block_size * sizeof(double));
+        double * result = (double *) malloc (block_size * sizeof(double));
+
+        MPI_Recv(
+            MATRIX_BLOCK, 
+            DIMENSION * block_size, 
+            MPI_DOUBLE, 0, 
+            TAG_MATRIX_BLOCK, MPI_COMM_WORLD, 
+            &status
         );
-        if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
-            break;  // The master told us to stop.
-        }
+
+        // int size_of_segment;
+        // MPI_Get_count(
+        //     &status, MPI_DOUBLE, &size_of_segment
+        // );
+        // if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
+        //     break;  // The master told us to stop.
+        // }
 
         // Perform matrix multiplacion
-        double result = row_vec_mul(segment_and_vector, 0, VECTOR_V, DIMENSION);
+        for (int i = 0; i < block_size; i ++){
+            result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V, DIMENSION);
+        }
 
-        send_result(result);
+        MPI_Send(
+            result, 
+            block_size, 
+            MPI_DOUBLE, 0, 
+            TAG_RESULT, 
+            MPI_COMM_WORLD
+        );
+
+        free(MATRIX_BLOCK);
+        free(result);
     }
 }
