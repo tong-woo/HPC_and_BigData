@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
         int workers = size - 1;
         // printf("Running as master with %d workers\n", workers);
 	const double start = MPI_Wtime();
-	int R = 50;
+	int R = 100;
 	bool is_last_iteration = false;
 	for(int i=1; i<=R; i++)
 	{
