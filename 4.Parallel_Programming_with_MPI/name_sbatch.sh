@@ -1,9 +1,10 @@
 #!/bin/bash -e
-#SBATCH -t 1:10 
-#SBATCH -N 1 -n=1
+#SBATCH -t 10:00
+#SBATCH --nodes=1 
+#SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --partition=normal
 
 export OMP_NUM_THREADS=16
 
-mpirun ./mat_vec_mul
+./mat_vec_mul

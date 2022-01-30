@@ -1,0 +1,2 @@
+double free or corruption (!prev)
+/var/spool/slurm/slurmd/job8721052/slurm_script: line 10: 17771 Aborted                 ./mat_vec_mul

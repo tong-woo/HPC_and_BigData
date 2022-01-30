@@ -46,7 +46,7 @@ int main(void) {
    double* y;
    int n;
    double result;
-   int start, end;
+   double start, end;
    int R = 100;
    int N = 10000;
 //    Set_dims(&n, &N);                 //Hover on the functions to see details
@@ -63,7 +63,7 @@ int main(void) {
        x = y;
    }
    end  = omp_get_wtime();
-   printf("Time estimate: %.20f", end-start);
+   printf("Time estimate: %.4f", end-start);
 
 //    Print_vector("y", y, N);
    // result = row_vec_mul(A, 0, x, N); // Now the product of vectors(A[0] and X) has been stored in result
@@ -118,9 +118,9 @@ void Allocate_dynamic_arrays(
     double**  y_pp  /* out */,    
     int       N     /* in  */) {
 
-        *A_pp = malloc(N*N*sizeof(double));
-        *x_pp = malloc(N*sizeof(double));
-        *y_pp = malloc(N*sizeof(double));
+        *A_pp = (double*) malloc(N*N*sizeof(double));
+        *x_pp = (double*) malloc(N*sizeof(double));
+        *y_pp = (double*) malloc(N*sizeof(double));
         if (!A_pp || !x_pp || !y_pp) {
         fprintf(stderr, "%s: memory exhausted\n", "mat_vec_mul.c");
         exit(1);

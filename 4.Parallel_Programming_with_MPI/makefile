@@ -26,4 +26,4 @@ empty:
 	rm -rf $(JUNK) $(EXPENSIVE_JUNK)
 
 mat_vec_mul: mat_vec_mul.c
-	mpiCC $(MPI_CFLAGS) -o mat_vec_mul mat_vec_mul.c
+	$(CC) $(OMP_CFLAGS) -o mat_vec_mul mat_vec_mul.c
