@@ -207,12 +207,12 @@ int main(int argc, char *argv[]) {
                         MPI_INT, worker, 
                         TAG_DIMENSION, MPI_COMM_WORLD
                     );
-
+                    MPI_Request req;
                     MPI_Isend(
                         MATRIX + dimensions_sent * DIMENSION_SIZE,
                         DIMENSION_SIZE * worker_block_size, 
                         MPI_DOUBLE, worker, 
-                        TAG_MATRIX_BLOCK, MPI_COMM_WORLD
+                        TAG_MATRIX_BLOCK, MPI_COMM_WORLD, &req
                     );
 
                     worker_block_start[worker] = dimensions_sent;
