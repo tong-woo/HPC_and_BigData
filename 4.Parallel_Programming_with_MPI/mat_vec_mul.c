@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
                     dimensions_sent += worker_block_size;
                 }
                 finish = MPI_Wtime();
-                printf("Timestamp after sending. This took %.4f seconds\n", finish-start);
+                //printf("Timestamp after sending. This took %.4f seconds\n", finish-start);
 
                 // printf("Master sent all work...");
                 while (active_workers > 0) {
@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
                     active_workers--;
                 }
                 finish = MPI_Wtime();
-                printf("Timestamp after computation. This took %.4f seconds\n", finish-start);
+                //printf("Timestamp after computation. This took %.4f seconds\n", finish-start);
         }
         finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
