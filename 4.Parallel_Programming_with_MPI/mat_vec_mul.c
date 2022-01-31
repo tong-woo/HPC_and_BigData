@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int DIMENSION_SIZE = 1600; // N
+    int DIMENSION_SIZE = 1500; // N
     double MATRIX[DIMENSION_SIZE*DIMENSION_SIZE];
     double VECTOR_V[DIMENSION_SIZE];
     double VECTOR_RESULT[DIMENSION_SIZE];
