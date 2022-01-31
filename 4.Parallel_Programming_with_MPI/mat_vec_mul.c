@@ -148,10 +148,8 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int DIMENSION_SIZE = 40000; // N
-    double MATRIX[DIMENSION_SIZE*DIMENSION_SIZE];
+    int DIMENSION_SIZE = 70000; // N
     double VECTOR_V[DIMENSION_SIZE];
-    double VECTOR_RESULT[DIMENSION_SIZE];
 
     srand((unsigned)time(NULL)); //set seed to generate random nums
 
@@ -159,6 +157,8 @@ int main(int argc, char *argv[]) {
 
     printf("Running!!!!!!!!!!");
     if (am_master) {
+        double MATRIX[DIMENSION_SIZE*DIMENSION_SIZE];
+        double VECTOR_RESULT[DIMENSION_SIZE];
         printf("Running as master");
         Build_matrix(MATRIX, DIMENSION_SIZE);
         printf("Matrix built");       
