@@ -28,7 +28,6 @@
 #include <omp.h>
 /*---------implicit declaration of functions not allowed(C99)--------*/
 
-void Set_dims(int* n_p , int* N_p );
 void Allocate_dynamic_arrays(double** A_pp, double** x_pp, 
      double** y_pp, int N);
 void Build_matrix(double A[], int n);
@@ -37,66 +36,39 @@ void Print_matrix(char name[], double A[], int n);
 void Print_vector(char name[], double vec[], int n);
 void Mat_vec_mul(double A[], double x[], 
       double y[], int N);
-double row_vec_mul(double A[], int row, double x[],int N);
 
 /*--------------------------------------------------------------------*/
 int main(void) {
-   double* A;
-   double* x;
-   double* y;
+   double* MATRIX;
+   double* VECTOR_V;
+   double* VECTOR_RESULT;
    int n;
    double result;
    double start, end;
    int R = 100;
-   int N = 10000;
-//    Set_dims(&n, &N);                 //Hover on the functions to see details
-   Allocate_dynamic_arrays(&A, &x, &y, N);
-    //set seed to generate random nums
-   Build_matrix(A, N);               //Matrix array stored in A
-//    Print_matrix("A", A, N);  
-   Build_vector(x, N);               //Vector array stored in x
-//    Print_vector("x", x, N);
-   /*uncomment below to verify if the first element of y vector is the same as result value*/
+   int DIMENSION_SIZE = 10000;            
+   Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
+   Build_matrix(MATRIX, DIMENSION_SIZE);
+#  ifdef DEBUG
+   Print_matrix("Matrix", MATRIX, DIMENSION_SIZE);
+#  endif            
+   Build_vector(VECTOR_V, DIMENSION_SIZE);
+#  ifdef DEBUG
+   Print_vector("Vector", VECTOR_V, DIMENSION_SIZE);
+#  endif              
    start = omp_get_wtime();
    for(int i=0;i < R;i++){
-       Mat_vec_mul(A, x, y, N);
-       *x = *y;
+       Mat_vec_mul(MATRIX, VECTOR_V, VECTOR_RESULT, DIMENSION_SIZE);
+       *VECTOR_V = *VECTOR_RESULT;
    }
    end  = omp_get_wtime();
-   printf("Time estimate: %.4f", end-start);
+   printf("Execution time is: %.4f\n", end-start);
 
-//    Print_vector("y", y, N);
-   // result = row_vec_mul(A, 0, x, N); // Now the product of vectors(A[0] and X) has been stored in result
-//    printf("\n%f ", result);
-   free(A);
-   free(x);
-   free(y);
+   free(MATRIX);
+   free(VECTOR_V);
+   free(VECTOR_RESULT);
    return 0;
 }  /* main */
-
-
-/*-------------------------------------------------------------------
- * Function:  Set_dims
- * Purpose:   Set the dimensions of the matrix and the vectors from stdin.
- * In args:   NA
- * Out args:  *n_p: global number of cols of A and rows of x
- *            *N_p: local number of cols of A and rows of x
- *
- * Errors:    1.if either m or n isn't positive the
- *            program prints an error message and quits.
- * Note:      NA
- */
-void Set_dims(
-    int*      n_p  /* out */,
-    int*      N_p  /* out */) {
-        printf("Enter the size of matrix and vector\n");
-        scanf("%d", n_p);
-        if(*n_p<0){
-            printf("invalid input");
-            exit(-1);
-        }
-        *N_p = *n_p;
-}  /* Set_dims */
 
 
 /*-------------------------------------------------------------------
@@ -252,30 +224,3 @@ void Mat_vec_mul(
 }  /* Mat_vec_mul */
 
 
-/*-------------------------------------------------------------------
- * Function:  row_vec_mul
- * Purpose:   Multiply a row vector of matrix A and a vector x. The matrix 
- *            is distributed by row blocks and the vectors are distributed 
- *            by blocks of column
- * In args:   A:   matrix A
- *            row: the row index of matrix (e.g. 0,1,2...N)
- *            x:   vector x
- *            N:   number of columns
- * out args:  res: stores the duble value of vector product
- * 
- * Errors:    if malloc of local storage on any process fails, all
- *            processes quit.            
- * Notes:     NA
- */
-double row_vec_mul(
-    double    A[]  /* in  */,
-    int       row  /* in  */, 
-    double    x[]  /* in  */, 
-    int       N    /* in  */){
-        int j;
-        double res = 0.0;
-        for (j = 0; j < N; j++){
-            res += A[row*N+j]*x[j];
-        }
-    return res;
-}  /* row_vec_mul */
