@@ -170,7 +170,7 @@ int main(int argc, char *argv[]) {
         int R = 300;
         bool is_last_iteration = false;
         int worker_count = workers;
-        for(int i=1; i<=R; i++) {
+        for(int i=0; i<R; i++) {
                 //if(i==R) is_last_iteration = true;
                 // double * VECTOR_R = run_as_master(
                 //     workers, 
@@ -196,7 +196,7 @@ int main(int argc, char *argv[]) {
                 int block_size = ceil(DIMENSION_SIZE / worker_count);
 
                 for (int worker = 1; worker <= worker_count && dimensions_sent < DIMENSION_SIZE; worker++) {
-                    if (i > 1){
+                    if (i > 0){
                         active_workers = worker_count;
                         break;
                     }
@@ -211,13 +211,13 @@ int main(int argc, char *argv[]) {
                         MPI_INT, worker, 
                         TAG_DIMENSION, MPI_COMM_WORLD
                     );
-                    MPI_Request req;
+                    //MPI_Request req;
 
-                    MPI_Isend(
+                    MPI_Send(
                         MATRIX + dimensions_sent * DIMENSION_SIZE,
                         DIMENSION_SIZE * worker_block_size, 
                         MPI_DOUBLE, worker, 
-                        TAG_MATRIX_BLOCK, MPI_COMM_WORLD, &req
+                        TAG_MATRIX_BLOCK, MPI_COMM_WORLD //, &req
                     );
 
                     worker_block_start[worker] = dimensions_sent;
@@ -311,8 +311,8 @@ int main(int argc, char *argv[]) {
                 MPI_COMM_WORLD
             );
 
-            free(MATRIX_BLOCK);
-            free(result);
+            //free(MATRIX_BLOCK);
+            //free(result);
         }
         printf("Stopped as worker %d\n", rank);
     }
