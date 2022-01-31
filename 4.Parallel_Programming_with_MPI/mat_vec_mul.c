@@ -166,7 +166,7 @@ int main(int argc, char *argv[]) {
         int workers = size - 1;
         printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
-        const double finish;
+        double finish;
         int R = 2;
         bool is_last_iteration = false;
         int worker_count = workers;
