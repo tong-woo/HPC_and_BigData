@@ -35,7 +35,7 @@ void Build_vector(double x[], int N);
 void Print_matrix(char name[], double A[], int n);
 void Print_vector(char name[], double vec[], int n);
 double row_vec_mul(double * A, int row, double * x,int N);
-void *run_as_master(
+void run_as_master(
     int worker_count, 
     int DIMENSION_SIZE, 
     double *VECTOR_RESULT, 
@@ -94,6 +94,7 @@ int main(int argc, char *argv[]) {
         run_as_worker(
             DIMENSION_SIZE
         );
+        printf("Stopped as worker %d\n", rank);
     }
 
     MPI_Finalize();
@@ -299,7 +300,6 @@ void run_as_worker(
             MPI_COMM_WORLD
         );
     }
-    printf("Stopped as worker %d\n", rank);
 }
 
 
@@ -313,7 +313,7 @@ void run_as_worker(
  * @param nval The number of values to examine.
  * @return The number of values in the specified range.
  */
-void *run_as_master(
+void run_as_master(
     int worker_count, 
     int DIMENSION_SIZE, 
     double *VECTOR_RESULT, 
