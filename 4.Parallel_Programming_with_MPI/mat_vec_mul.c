@@ -170,6 +170,10 @@ int main(int argc, char *argv[]) {
         int R = 300;
         bool is_last_iteration = false;
         int worker_count = workers;
+        int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
+        int *worker_block_sizes = (int*) malloc(sizeof(int) * worker_count);
+        int block_size = ceil(DIMENSION_SIZE / worker_count);
+
         for(int i=0; i<R; i++) {
                 //if(i==R) is_last_iteration = true;
                 // double * VECTOR_R = run_as_master(
@@ -190,10 +194,6 @@ int main(int argc, char *argv[]) {
                 );
 
                 int active_workers = 0, dimensions_sent = 0;
-                int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
-                int *worker_block_sizes = (int*) malloc(sizeof(int) * worker_count);
-
-                int block_size = ceil(DIMENSION_SIZE / worker_count);
 
                 for (int worker = 1; worker <= worker_count && dimensions_sent < DIMENSION_SIZE; worker++) {
                     if (i > 0){
@@ -299,8 +299,8 @@ int main(int argc, char *argv[]) {
             }
 
             // Perform matrix multiplacion
-            for (int i = 0; i < block_size; i ++){
-                result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V_w, DIMENSION_SIZE);
+            for (int j = 0; j < block_size; j++){
+                result[j] = row_vec_mul(MATRIX_BLOCK, j, VECTOR_V_w, DIMENSION_SIZE);
             }
 
             MPI_Send(
