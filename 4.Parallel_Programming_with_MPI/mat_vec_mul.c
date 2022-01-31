@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
                     MATRIX,
                     block_size * DIMENSION_SIZE,
                     MPI_DOUBLE,
-                    MATRIX_SEGMENT, 0, MPI_DOUBLE, 
+                    MATRIX_SEGMENT, block_size * DIMENSION_SIZE, MPI_DOUBLE, 
                     0, 
                     MPI_COMM_WORLD
                 );
@@ -324,12 +324,12 @@ int main(int argc, char *argv[]) {
             double * MATRIX_BLOCK = (double *) malloc( DIMENSION_SIZE * block_size * sizeof(double));
             double * result = (double *) malloc (block_size * sizeof(double));
 
-            double * dummy = (double *) malloc( 1 * sizeof(double));;
+            double x = 1;
 
             MPI_Barrier(MPI_COMM_WORLD);
             printf("3\n");
             MPI_Scatter(
-                dummy, 1, MPI_DOUBLE,
+                &x, 1, MPI_DOUBLE,
                 MATRIX_BLOCK, 
                 DIMENSION_SIZE * block_size, 
                 MPI_DOUBLE, 
