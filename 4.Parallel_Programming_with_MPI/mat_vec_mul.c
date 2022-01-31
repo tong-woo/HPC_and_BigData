@@ -60,7 +60,7 @@ int main(void) {
    start = omp_get_wtime();
    for(int i=0;i < R;i++){
        Mat_vec_mul(A, x, y, N);
-       x = y;
+       *x = *y;
    }
    end  = omp_get_wtime();
    printf("Time estimate: %.4f", end-start);
@@ -118,9 +118,9 @@ void Allocate_dynamic_arrays(
     double**  y_pp  /* out */,    
     int       N     /* in  */) {
 
-        *A_pp = (double*) malloc(N*N*sizeof(double));
-        *x_pp = (double*) malloc(N*sizeof(double));
-        *y_pp = (double*) malloc(N*sizeof(double));
+        *A_pp = (double*) malloc((N*N+1)*sizeof(double));
+        *x_pp = (double*) malloc((N+1)*sizeof(double));
+        *y_pp = (double*) malloc((N+1)*sizeof(double));
         if (!A_pp || !x_pp || !y_pp) {
         fprintf(stderr, "%s: memory exhausted\n", "mat_vec_mul.c");
         exit(1);

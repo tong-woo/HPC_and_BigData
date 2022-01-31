@@ -5,6 +5,6 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --partition=normal
 
-export OMP_NUM_THREADS=16
+export OMP_NUM_THREADS=1
 
 ./mat_vec_mul
