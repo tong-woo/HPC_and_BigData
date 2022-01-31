@@ -231,6 +231,8 @@ int main(int argc, char *argv[]) {
                     dimensions_sent += worker_block_size;
                 }
 
+                printf("SCATTER START\n");
+
                 MPI_Scatter(
                     MATRIX,
                     block_size * DIMENSION_SIZE,
@@ -240,6 +242,8 @@ int main(int argc, char *argv[]) {
                     MPI_COMM_WORLD
                 );
 
+                printf("SCATTER END\n");
+
                 // printf("Master sent all work...");
                 while (active_workers > 0) {
                     int worker;
@@ -248,12 +252,14 @@ int main(int argc, char *argv[]) {
                     // await_result(&worker, result, worker_block_sizes[worker]);
 
                     MPI_Status status;
+                    printf("RECEIV S\n");
                     MPI_Recv(
                         result, 
                         block_size, // last iteration ?? 
                         MPI_DOUBLE, MPI_ANY_SOURCE, 
                         TAG_RESULT, MPI_COMM_WORLD, &status
                     );
+                    printf("RECEIV END\n");
                     worker = status.MPI_SOURCE;
 
                     memcpy( // Get row of matrix to send to worker
@@ -326,6 +332,7 @@ int main(int argc, char *argv[]) {
                 0, 
                 MPI_COMM_WORLD
             );
+            printf("4\n");
             // Perform matrix multiplacion
             #pragma opm parallel for
             for (int i = 0; i < block_size; i ++){
@@ -339,6 +346,8 @@ int main(int argc, char *argv[]) {
                 TAG_RESULT, 
                 MPI_COMM_WORLD
             );
+
+            printf("5\n");
 
             free(MATRIX_BLOCK);
             free(result);
