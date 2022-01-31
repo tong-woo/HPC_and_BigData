@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 
         const double start = MPI_Wtime();
         run_as_master(
-            ITERATIONS_R
+            ITERATIONS_R,
             workers, 
             DIMENSION_SIZE,
             VECTOR_RESULT,
