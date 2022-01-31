@@ -181,7 +181,6 @@ int main(int argc, char *argv[]) {
                 //     is_last_iteration
                 // );
 
-                printf("BBAST START\n");
                 MPI_Bcast(
                     VECTOR_V, 
                     DIMENSION_SIZE, 
@@ -189,27 +188,18 @@ int main(int argc, char *argv[]) {
                     0, 
                     MPI_COMM_WORLD
                 );
-                printf("BBAST END\n");
                 int active_workers = 0, dimensions_sent = 0;
                 int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
                 int *worker_block_sizes = (int*) malloc(sizeof(int) * worker_count);
 
                 int block_size = ceil(DIMENSION_SIZE / worker_count);
 
-                // This variable will store the segment of the matrix to multiply
-                double* MATRIX_SEGMENT = (double *) malloc(sizeof(double) * DIMENSION_SIZE * block_size);
-                    
+
                 for (int worker = 1; worker <= worker_count && dimensions_sent < DIMENSION_SIZE; worker++) {
                     int worker_block_size = block_size;
                     if ((dimensions_sent + block_size) > DIMENSION_SIZE){
                         worker_block_size = DIMENSION_SIZE - dimensions_sent;
                     }
-                    // memcpy( // Get row of matrix to send to worker
-                    //     MATRIX_SEGMENT, 
-                    //     MATRIX + dimensions_sent * DIMENSION_SIZE, 
-                    //     sizeof(double) * DIMENSION_SIZE * worker_block_size
-                    // );
-                    // Print_vector("Z", MATRIX_SEGMENT, DIMENSION_SIZE);
 
                     MPI_Send(
                         &worker_block_size, 
@@ -231,8 +221,6 @@ int main(int argc, char *argv[]) {
                     dimensions_sent += worker_block_size;
                 }
 
-                printf("SCATTER END\n");
-
                 // printf("Master sent all work...");
                 while (active_workers > 0) {
                     int worker;
@@ -241,14 +229,12 @@ int main(int argc, char *argv[]) {
                     // await_result(&worker, result, worker_block_sizes[worker]);
 
                     MPI_Status status;
-                    printf("RECEIV S\n");
                     MPI_Recv(
                         result, 
                         block_size, // last iteration ?? 
                         MPI_DOUBLE, MPI_ANY_SOURCE, 
                         TAG_RESULT, MPI_COMM_WORLD, &status
                     );
-                    printf("RECEIV END\n");
                     worker = status.MPI_SOURCE;
 
                     memcpy( // Get row of matrix to send to worker
@@ -267,9 +253,7 @@ int main(int argc, char *argv[]) {
         int block_size = 0;
         double * VECTOR_V_w = (double *) malloc (DIMENSION_SIZE * sizeof(double));
 
-        printf("AJA\n");
         while (true){
-            printf("1\n");
             MPI_Bcast(
                 VECTOR_V_w, 
                 DIMENSION_SIZE, 
@@ -278,7 +262,6 @@ int main(int argc, char *argv[]) {
                 MPI_COMM_WORLD
             );
 
-            printf("2\n");
             MPI_Recv(
                 &block_size,
                 1,
@@ -290,8 +273,6 @@ int main(int argc, char *argv[]) {
             double * MATRIX_BLOCK = (double *) malloc( DIMENSION_SIZE * block_size * sizeof(double));
             double * result = (double *) malloc (block_size * sizeof(double));
 
-            printf("3\n");
-            printf("hm %d\n", block_size);
             MPI_Recv(
                 MATRIX_BLOCK, 
                 DIMENSION_SIZE * block_size, 
@@ -299,7 +280,7 @@ int main(int argc, char *argv[]) {
                 0, TAG_MATRIX_BLOCK,
                 MPI_COMM_WORLD, &status
             );
-            printf("4\n");
+
             // Perform matrix multiplacion
             #pragma opm parallel for
             for (int i = 0; i < block_size; i ++){
@@ -313,8 +294,6 @@ int main(int argc, char *argv[]) {
                 TAG_RESULT, 
                 MPI_COMM_WORLD
             );
-
-            printf("5\n");
 
             free(MATRIX_BLOCK);
             free(result);
