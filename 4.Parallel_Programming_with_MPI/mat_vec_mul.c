@@ -242,6 +242,8 @@ int main(int argc, char *argv[]) {
                     MPI_COMM_WORLD
                 );
 
+                MPI_Barrier(MPI_COMM_WORLD);
+
                 printf("SCATTER END\n");
 
                 // printf("Master sent all work...");
@@ -322,10 +324,12 @@ int main(int argc, char *argv[]) {
             double * MATRIX_BLOCK = (double *) malloc( DIMENSION_SIZE * block_size * sizeof(double));
             double * result = (double *) malloc (block_size * sizeof(double));
 
-            printf("3\n");
+            double * dummy;
 
+            MPI_Barrier(MPI_COMM_WORLD);
+            printf("3\n");
             MPI_Scatter(
-                MATRIX_BLOCK, 1, MPI_DOUBLE,
+                dummy, 1, MPI_DOUBLE,
                 MATRIX_BLOCK, 
                 DIMENSION_SIZE * block_size, 
                 MPI_DOUBLE, 
@@ -720,6 +724,7 @@ double *run_as_master(
         0, 
         MPI_COMM_WORLD
     );
+    MPI_Barrier(MPI_COMM_WORLD);
 
     // printf("Master sent all work...");
     while (active_workers > 0) {
