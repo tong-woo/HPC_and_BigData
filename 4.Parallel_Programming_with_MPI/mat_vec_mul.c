@@ -75,6 +75,7 @@ void run_as_worker(int DIMENSION) {
             0, 
             MPI_COMM_WORLD
         );
+
         printf("2");
         MPI_Recv(
             &block_size,
@@ -147,7 +148,7 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int DIMENSION_SIZE = 10000; // N
+    int DIMENSION_SIZE = 100; // N
     double MATRIX[DIMENSION_SIZE][DIMENSION_SIZE];
     double VECTOR_V[DIMENSION_SIZE];
     double VECTOR_RESULT[DIMENSION_SIZE];
@@ -495,7 +496,7 @@ double *run_as_master(
     double *MATRIX,
     bool last_iteration
 ) {
-
+    printf("BBAST START");
     MPI_Bcast(
         VECTOR_V, 
         DIMENSION_SIZE, 
@@ -503,6 +504,7 @@ double *run_as_master(
         0, 
         MPI_COMM_WORLD
     );
+    printf("BBAST END");
     int active_workers = 0, dimensions_sent = 0;
     int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
     int *worker_block_sizes = (int*) malloc(sizeof(int) * worker_count);
