@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int DIMENSION_SIZE = 40000; // N
+    int DIMENSION_SIZE = 10000; // N
 
     srand((unsigned)time(NULL)); //set seed to generate random nums
 
@@ -167,10 +167,10 @@ int main(int argc, char *argv[]) {
         printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
         double finish;
-        int R = 2;
+        int R = 100;
         bool is_last_iteration = false;
         int worker_count = workers;
-        //for(int i=1; i<=R; i++) {
+        for(int i=1; i<=R; i++) {
                 //if(i==R) is_last_iteration = true;
                 // double * VECTOR_R = run_as_master(
                 //     workers, 
@@ -248,7 +248,7 @@ int main(int argc, char *argv[]) {
                 }
                 finish = MPI_Wtime();
                 printf("Timestamp after computation. This took %.4f seconds\n", finish-start);
-        //}
+        }
         finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
         // free(MATRIX);
