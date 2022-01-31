@@ -188,14 +188,18 @@ int main(int argc, char *argv[]) {
                     0, 
                     MPI_COMM_WORLD
                 );
+
                 int active_workers = 0, dimensions_sent = 0;
                 int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
                 int *worker_block_sizes = (int*) malloc(sizeof(int) * worker_count);
 
                 int block_size = ceil(DIMENSION_SIZE / worker_count);
 
-
                 for (int worker = 1; worker <= worker_count && dimensions_sent < DIMENSION_SIZE; worker++) {
+                    if (i > 1){
+                        active_workers = worker_count;
+                        break;
+                    }
                     int worker_block_size = block_size;
                     if ((dimensions_sent + block_size) > DIMENSION_SIZE){
                         worker_block_size = DIMENSION_SIZE - dimensions_sent;
@@ -208,6 +212,7 @@ int main(int argc, char *argv[]) {
                         TAG_DIMENSION, MPI_COMM_WORLD
                     );
                     MPI_Request req;
+
                     MPI_Isend(
                         MATRIX + dimensions_sent * DIMENSION_SIZE,
                         DIMENSION_SIZE * worker_block_size, 
@@ -259,7 +264,9 @@ int main(int argc, char *argv[]) {
         MPI_Status status;
         int block_size = 0;
         double * VECTOR_V_w = (double *) malloc (DIMENSION_SIZE * sizeof(double));
-
+        bool have_received_matrix = false;
+        double * MATRIX_BLOCK;
+        double * result;
         while (true){
             MPI_Bcast(
                 VECTOR_V_w, 
@@ -269,27 +276,29 @@ int main(int argc, char *argv[]) {
                 MPI_COMM_WORLD
             );
 
-            MPI_Recv(
-                &block_size,
-                1,
-                MPI_INT, 0, 
-                TAG_DIMENSION, MPI_COMM_WORLD,
-                &status
-            );
+            if (!have_received_matrix){
+                MPI_Recv(
+                    &block_size,
+                    1,
+                    MPI_INT, 0, 
+                    TAG_DIMENSION, MPI_COMM_WORLD,
+                    &status
+                );
 
-            double * MATRIX_BLOCK = (double *) malloc( DIMENSION_SIZE * block_size * sizeof(double));
-            double * result = (double *) malloc (block_size * sizeof(double));
+                MATRIX_BLOCK = (double *) malloc( DIMENSION_SIZE * block_size * sizeof(double));
+                result = (double *) malloc (block_size * sizeof(double));
 
-            MPI_Recv(
-                MATRIX_BLOCK, 
-                DIMENSION_SIZE * block_size, 
-                MPI_DOUBLE, 
-                0, TAG_MATRIX_BLOCK,
-                MPI_COMM_WORLD, &status
-            );
+                MPI_Recv(
+                    MATRIX_BLOCK, 
+                    DIMENSION_SIZE * block_size, 
+                    MPI_DOUBLE, 
+                    0, TAG_MATRIX_BLOCK,
+                    MPI_COMM_WORLD, &status
+                );
+                have_received_matrix = true;
+            }
 
             // Perform matrix multiplacion
-            #pragma opm parallel for
             for (int i = 0; i < block_size; i ++){
                 result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V_w, DIMENSION_SIZE);
             }
