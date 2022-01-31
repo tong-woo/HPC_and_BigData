@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
 
     printf("Running!!!!!!!!!!");
     if (am_master) {
-        double MATRIX[DIMENSION_SIZE*DIMENSION_SIZE];
+        double MATRIX[(long)DIMENSION_SIZE* (long)DIMENSION_SIZE];
         double VECTOR_V[DIMENSION_SIZE];
         double VECTOR_RESULT[DIMENSION_SIZE];
         printf("Running as master");
@@ -246,9 +246,9 @@ int main(int argc, char *argv[]) {
         //}
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
-        free(MATRIX);
-        free(VECTOR_V);
-        free(VECTOR_RESULT);
+        // free(MATRIX);
+        // free(VECTOR_V);
+        // free(VECTOR_RESULT);
     } else {
         printf("Running as workerF %d\n", rank);
         MPI_Status status;
