@@ -39,7 +39,7 @@ void Print_matrix(char name[], double A[], int n);
 void Print_vector(char name[], double vec[], int n);
 void Mat_vec_mul(double A[], double x[], 
       double y[], int N);
-double row_vec_mul(double A[], int row, double x[],int N);
+double row_vec_mul(double * A, int row, double * x,int N);
 double *run_as_master(
     int worker_count, 
     int DIMENSION_SIZE, 
@@ -571,9 +571,9 @@ void Mat_vec_mul(
  * Notes:     NA
  */
 double row_vec_mul(
-    double    A[]  /* in  */,
+    double    * A  /* in  */,
     int       row  /* in  */, 
-    double    x[]  /* in  */, 
+    double    * x  /* in  */, 
     int       N    /* in  */){
         if(row >= N || row < 0){
             printf("The row index is invalid(row_idx > N)");
