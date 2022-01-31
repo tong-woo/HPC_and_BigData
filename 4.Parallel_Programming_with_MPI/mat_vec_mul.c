@@ -208,7 +208,7 @@ int main(int argc, char *argv[]) {
                         TAG_DIMENSION, MPI_COMM_WORLD
                     );
 
-                    MPI_Send(
+                    MPI_Isend(
                         MATRIX + dimensions_sent * DIMENSION_SIZE,
                         DIMENSION_SIZE * worker_block_size, 
                         MPI_DOUBLE, worker, 
