@@ -246,6 +246,9 @@ int main(int argc, char *argv[]) {
         //}
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
+        free(MATRIX);
+        free(VECTOR_V);
+        free(VECTOR_RESULT);
     } else {
         printf("Running as workerF %d\n", rank);
         MPI_Status status;
@@ -301,10 +304,6 @@ int main(int argc, char *argv[]) {
     }
 
     MPI_Finalize();
-
-    free(MATRIX);
-    free(VECTOR_V);
-    free(VECTOR_RESULT);
     return 0;
 }  /* main */
 
