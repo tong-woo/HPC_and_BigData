@@ -164,12 +164,12 @@ int main(int argc, char *argv[]) {
         printf("Matrix built");       
         Build_vector(VECTOR_V, DIMENSION_SIZE);            
         int workers = size - 1;
-        printf("Running as master with %d workers", workers);
+        printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
         int R = 2;
         bool is_last_iteration = false;
         int worker_count = workers;
-        printf("this is bs");
+        printf("this is bs\n");
         //for(int i=1; i<=R; i++) {
                 //if(i==R) is_last_iteration = true;
                 // double * VECTOR_R = run_as_master(
@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
                 //     is_last_iteration
                 // );
 
-                printf("BBAST START");
+                printf("BBAST START\n");
                 MPI_Bcast(
                     VECTOR_V, 
                     DIMENSION_SIZE, 
@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
                     0, 
                     MPI_COMM_WORLD
                 );
-                printf("BBAST END");
+                printf("BBAST END\n");
                 int active_workers = 0, dimensions_sent = 0;
                 int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
                 int *worker_block_sizes = (int*) malloc(sizeof(int) * worker_count);
@@ -293,9 +293,9 @@ int main(int argc, char *argv[]) {
         int block_size = 0;
         double * VECTOR_V_w = (double *) malloc (DIMENSION_SIZE * sizeof(double));
 
-        printf("AJA");
+        printf("AJA\n");
         while (true){
-            printf("1");
+            printf("1\n");
             MPI_Bcast(
                 VECTOR_V_w, 
                 DIMENSION_SIZE, 
@@ -304,7 +304,7 @@ int main(int argc, char *argv[]) {
                 MPI_COMM_WORLD
             );
 
-            printf("2");
+            printf("2\n");
             MPI_Recv(
                 &block_size,
                 1,
@@ -316,7 +316,7 @@ int main(int argc, char *argv[]) {
             double * MATRIX_BLOCK = (double *) malloc( DIMENSION_SIZE * block_size * sizeof(double));
             double * result = (double *) malloc (block_size * sizeof(double));
 
-            printf("3");
+            printf("3\n");
 
             MPI_Scatter(
                 MATRIX_BLOCK, 1, MPI_DOUBLE,
