@@ -1,5 +1,5 @@
 #!/bin/bash -e
-#SBATCH -t 1:30
-#SBATCH -N 1 --ntasks-per-node=16
+#SBATCH -t 5:30
+#SBATCH -N 16 --ntasks-per-node=1
 
 mpirun ./mat_vec_mul
