@@ -328,6 +328,7 @@ int main(int argc, char *argv[]) {
 
             MPI_Barrier(MPI_COMM_WORLD);
             printf("3\n");
+            printf("hm %d\n", block_size);
             MPI_Scatter(
                 dummy, 0, MPI_DOUBLE,
                 MATRIX_BLOCK, 
