@@ -55,88 +55,6 @@ int TAG_VECTOR_V = 2;
 int TAG_RESULT = 3;
 int TAG_MATRIX_BLOCK = 4;
 
-
-/**
- * The code to run as worker: receive jobs, execute them, and terminate when told to.
- */
-void run_as_worker(int DIMENSION) {
-    printf("wut");
-    MPI_Status status;
-    int block_size = 0;
-    double * VECTOR_V = (double *) malloc (DIMENSION * sizeof(double));
-
-    printf("AJA");
-    while (true){
-        printf("1");
-        MPI_Bcast(
-            VECTOR_V, 
-            DIMENSION, 
-            MPI_DOUBLE,  
-            0, 
-            MPI_COMM_WORLD
-        );
-
-        printf("2");
-        MPI_Recv(
-            &block_size,
-            1,
-            MPI_INT, 0, 
-            TAG_DIMENSION, MPI_COMM_WORLD,
-            &status
-        );
-
-        double * MATRIX_BLOCK = (double *) malloc( DIMENSION * block_size * sizeof(double));
-        double * result = (double *) malloc (block_size * sizeof(double));
-
-        printf("3");
-
-        MPI_Scatter(
-            MATRIX_BLOCK, 1, MPI_DOUBLE,
-            MATRIX_BLOCK, 
-            DIMENSION * block_size, 
-            MPI_DOUBLE, 
-            0, 
-            MPI_COMM_WORLD
-        );
-
-        // MPI_Recv(
-        //     MATRIX_BLOCK, 
-        //     DIMENSION * block_size, 
-        //     MPI_DOUBLE, 0, 
-        //     TAG_MATRIX_BLOCK, MPI_COMM_WORLD, 
-        //     &status
-        // );
-
-        // int size_of_segment;
-        // MPI_Get_count(
-        //     &status, MPI_DOUBLE, &size_of_segment
-        // );
-        // if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
-        //     break;  // The master told us to stop.
-        // }
-
-        // Perform matrix multiplacion
-        #pragma opm parallel for
-        for (int i = 0; i < block_size; i ++){
-            result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V, DIMENSION);
-        }
-
-        MPI_Send(
-            result, 
-            block_size, 
-            MPI_DOUBLE, 0, 
-            TAG_RESULT, 
-            MPI_COMM_WORLD
-        );
-
-        free(MATRIX_BLOCK);
-        free(result);
-    }
-}
-
-
-
-
 /*--------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
 
@@ -252,6 +170,11 @@ int main(int argc, char *argv[]) {
                     active_workers--;
                 }
                 finish = MPI_Wtime();
+                memcpy(
+                    VECTOR_V, 
+                    VECTOR_RESULT, 
+                    sizeof(double) * DIMENSION_SIZE
+                );
                 //printf("Timestamp after computation. This took %.4f seconds\n", finish-start);
         }
         finish = MPI_Wtime();
@@ -321,76 +244,11 @@ int main(int argc, char *argv[]) {
     return 0;
 }  /* main */
 
-/*--------------------------------------------------------------------*/
-int main2(void) {
-   double* A;
-   double* x;
-   double* y;
-   int n, N;
-   double result;
-   int row_idx = 0;                  
-   Set_dims(&n, &N);                 //Hover on the functions to see details in VScode
-   Allocate_dynamic_arrays(&A, &x, &y, N);
-   srand((unsigned)time(NULL));      //set seed to generate random nums
-   Build_matrix(A, N);               //Matrix array stored in A
-   // Print_matrix("A", A, N);  
-   Build_vector(x, N);               //Vector array stored in x
-   // Print_vector("x", x, N);
-   /*uncomment below to verify if the first element of y vector is the same as result value*/
-   // Mat_vec_mul(A, x, y, N);
-   // Print_vector("y", y, N);
-   result = row_vec_mul(A, row_idx, x, N); // Now the product of vectors(A[row_idx] and X) has been stored in result
-   printf("\nThe product of vector and row %d of Matrix \n%f", row_idx+1, result);
-   free(A);
-   free(x);
-   free(y);
-   return 0;
-}  /* main */
 
 double fRand(double fMin, double fMax)
 {
     double f = (double)rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
-}
-
-/**
- * Given a value to send and a worker to send the value to, send
- * a message ordering the worker to compute whether the given value
- * is prime. The special value '0' means that the worker should quit.
- * The worker will send a message to the master with the verdict.
- *
- * @param worker  The worker to send the message to.
- * @param val The value to examine.
- */
-void send_work_command(int worker, double* matrix_and_vector, int data_to_send_dimension) {
-    // printf("send_work_command: worker=%d val=%lu\n", worker, val);
-    MPI_Send(matrix_and_vector, data_to_send_dimension, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
-}
-
-void turn_off_worker(int worker) {
-    double dummy = 0.0;
-    MPI_Send(&dummy, 1, MPI_DOUBLE, worker, 0, MPI_COMM_WORLD);
-}
-
-/**
- * Given a result to send, send a message telling the master that
- * the value it sent is prime or not. Note that the value for which the
- * result has been computed is not sent, since nobody cares about it.
- *
- * @param result The result.
- */
-void send_result(double result) {
-    
-}
-
-/**
- * Wait for the next result from a worker.
- *
- * @param worker A pointer to the variable that will hold the worker that sent the result.
- * @param result A pointer to the variable that will hold the result.
- */
-void await_result(int *worker, double *result, int worker_block_size) {
-
 }
 
 /*-------------------------------------------------------------------
@@ -604,6 +462,86 @@ double row_vec_mul(
 
 
 /**
+ * The code to run as worker: receive jobs, execute them, and terminate when told to.
+ */
+void run_as_worker(int DIMENSION) {
+    printf("wut");
+    MPI_Status status;
+    int block_size = 0;
+    double * VECTOR_V = (double *) malloc (DIMENSION * sizeof(double));
+
+    printf("AJA");
+    while (true){
+        printf("1");
+        MPI_Bcast(
+            VECTOR_V, 
+            DIMENSION, 
+            MPI_DOUBLE,  
+            0, 
+            MPI_COMM_WORLD
+        );
+
+        printf("2");
+        MPI_Recv(
+            &block_size,
+            1,
+            MPI_INT, 0, 
+            TAG_DIMENSION, MPI_COMM_WORLD,
+            &status
+        );
+
+        double * MATRIX_BLOCK = (double *) malloc( DIMENSION * block_size * sizeof(double));
+        double * result = (double *) malloc (block_size * sizeof(double));
+
+        printf("3");
+
+        MPI_Scatter(
+            MATRIX_BLOCK, 1, MPI_DOUBLE,
+            MATRIX_BLOCK, 
+            DIMENSION * block_size, 
+            MPI_DOUBLE, 
+            0, 
+            MPI_COMM_WORLD
+        );
+
+        // MPI_Recv(
+        //     MATRIX_BLOCK, 
+        //     DIMENSION * block_size, 
+        //     MPI_DOUBLE, 0, 
+        //     TAG_MATRIX_BLOCK, MPI_COMM_WORLD, 
+        //     &status
+        // );
+
+        // int size_of_segment;
+        // MPI_Get_count(
+        //     &status, MPI_DOUBLE, &size_of_segment
+        // );
+        // if (size_of_segment == 0 || size_of_segment == MPI_UNDEFINED) {
+        //     break;  // The master told us to stop.
+        // }
+
+        // Perform matrix multiplacion
+        #pragma opm parallel for
+        for (int i = 0; i < block_size; i ++){
+            result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V, DIMENSION);
+        }
+
+        MPI_Send(
+            result, 
+            block_size, 
+            MPI_DOUBLE, 0, 
+            TAG_RESULT, 
+            MPI_COMM_WORLD
+        );
+
+        free(MATRIX_BLOCK);
+        free(result);
+    }
+}
+
+
+
+/**
  * The code to run as master: send jobs to the workers, and await their replies.
  * There are `worker_count` workers, numbered from 1 up to and including `worker_count`.
  *
@@ -685,12 +623,10 @@ double *run_as_master(
         int worker;
         double * result = (double *) malloc(sizeof(double) * block_size);
 
-        // await_result(&worker, result, worker_block_sizes[worker]);
-
         MPI_Status status;
         MPI_Recv(
             result, 
-            block_size, // last iteration ?? 
+            block_size, 
             MPI_DOUBLE, MPI_ANY_SOURCE, 
             TAG_RESULT, MPI_COMM_WORLD, &status
         );
@@ -702,24 +638,7 @@ double *run_as_master(
             sizeof(double) * worker_block_sizes[worker]
         );
 
-        //turn_off_worker(worker);
         active_workers--;
-
-        // if (dimensions_sent < DIMENSION_SIZE) { // Send next dimension
-        //     memcpy( // Get row of matrix to send to worker
-        //         MATRIX_SEGMENT, 
-        //         MATRIX + dimensions_sent * DIMENSION_SIZE, 
-        //         sizeof(double) * DIMENSION_SIZE
-        //     );
-        //     send_work_command(worker, MATRIX_SEGMENT, DIMENSION_SIZE);
-        //     worker_dimension_mapping[worker] = dimensions_sent;
-        //     dimensions_sent++;
-        // } else { // Turn off worker
-        //     if (last_iteration){
-        //         turn_off_worker(worker); 
-        //     }
-        //     active_workers--;
-        // }
     }
     return VECTOR_RESULT;
 }
