@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int DIMENSION_SIZE = 1500; // N
+    int DIMENSION_SIZE = 20000; // N
     double MATRIX[DIMENSION_SIZE*DIMENSION_SIZE];
     double VECTOR_V[DIMENSION_SIZE];
     double VECTOR_RESULT[DIMENSION_SIZE];
@@ -169,7 +169,6 @@ int main(int argc, char *argv[]) {
         int R = 2;
         bool is_last_iteration = false;
         int worker_count = workers;
-        printf("this is bs\n");
         //for(int i=1; i<=R; i++) {
                 //if(i==R) is_last_iteration = true;
                 // double * VECTOR_R = run_as_master(
