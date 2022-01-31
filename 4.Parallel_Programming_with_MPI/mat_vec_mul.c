@@ -168,6 +168,7 @@ int main(int argc, char *argv[]) {
         const double start = MPI_Wtime();
         int R = 2;
         bool is_last_iteration = false;
+        int worker_count = workers;
         for(int i=1; i<=R; i++) {
                 if(i==R) is_last_iteration = true;
                 // double * VECTOR_R = run_as_master(
@@ -327,7 +328,7 @@ int main(int argc, char *argv[]) {
             // Perform matrix multiplacion
             #pragma opm parallel for
             for (int i = 0; i < block_size; i ++){
-                result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V_w, DIMENSION);
+                result[i] = row_vec_mul(MATRIX_BLOCK, i, VECTOR_V_w, DIMENSION_SIZE);
             }
 
             MPI_Send(
