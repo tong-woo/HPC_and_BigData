@@ -324,7 +324,7 @@ int main(int argc, char *argv[]) {
             double * MATRIX_BLOCK = (double *) malloc( DIMENSION_SIZE * block_size * sizeof(double));
             double * result = (double *) malloc (block_size * sizeof(double));
 
-            double * dummy;
+            double * dummy = (double *) malloc( 1 * sizeof(double));;
 
             MPI_Barrier(MPI_COMM_WORLD);
             printf("3\n");
