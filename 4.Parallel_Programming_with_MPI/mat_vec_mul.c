@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
         printf("Matrix built");       
         Build_vector(VECTOR_V, DIMENSION_SIZE);            
         int workers = size - 1;
-        printf("Running as master with %d workers\n", workers);
+        printf("Running as master with %d workers", workers);
         const double start = MPI_Wtime();
         int R = 2;
         bool is_last_iteration = false;
