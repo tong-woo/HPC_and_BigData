@@ -330,7 +330,7 @@ int main(int argc, char *argv[]) {
             printf("3\n");
             printf("hm %d\n", block_size);
             MPI_Scatter(
-                dummy, 0, MPI_DOUBLE,
+                MATRIX_BLOCK, DIMENSION_SIZE * block_size, MPI_DOUBLE,
                 MATRIX_BLOCK, 
                 DIMENSION_SIZE * block_size, 
                 MPI_DOUBLE, 
