@@ -45,8 +45,8 @@ int main(void) {
    int n;
    double result;
    double start, end;
-   int R = 100;
-   int DIMENSION_SIZE = 10000;            
+   int R = 1000;
+   int DIMENSION_SIZE = 25000;            
    Allocate_dynamic_arrays(&MATRIX, &VECTOR_V, &VECTOR_RESULT, DIMENSION_SIZE);
    Build_matrix(MATRIX, DIMENSION_SIZE);
 #  ifdef DEBUG
