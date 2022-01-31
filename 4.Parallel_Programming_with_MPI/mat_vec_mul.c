@@ -36,6 +36,7 @@ void Print_matrix(char name[], double A[], int n);
 void Print_vector(char name[], double vec[], int n);
 double row_vec_mul(double * A, int row, double * x,int N);
 void run_as_master(
+    int ITERATIONS_R,
     int worker_count, 
     int DIMENSION_SIZE, 
     double *VECTOR_RESULT, 
@@ -62,6 +63,8 @@ int main(int argc, char *argv[]) {
 
     // Dimension N
     int DIMENSION_SIZE = 30000;
+    // Iterations R
+    int ITERATIONS_R = 300;
 
     // Seed to generate random nums
     srand((unsigned)time(NULL)); 
@@ -81,6 +84,7 @@ int main(int argc, char *argv[]) {
 
         const double start = MPI_Wtime();
         run_as_master(
+            ITERATIONS_R
             workers, 
             DIMENSION_SIZE,
             VECTOR_RESULT,
@@ -314,14 +318,13 @@ void run_as_worker(
  * @return The number of values in the specified range.
  */
 void run_as_master(
+    int ITERATIONS_R,
     int worker_count, 
     int DIMENSION_SIZE, 
     double *VECTOR_RESULT, 
     double *VECTOR_V, 
     double *MATRIX
 ) {
-    
-    int ITERATIONS_R = 300;
     bool is_last_iteration = false;
     int *worker_block_start = (int*) malloc(sizeof(int) * worker_count);
     int *worker_block_sizes = (int*) malloc(sizeof(int) * worker_count);
