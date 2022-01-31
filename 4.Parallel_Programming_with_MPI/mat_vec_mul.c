@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int DIMENSION_SIZE = 10000; // N
+    int DIMENSION_SIZE = 30000; // N
 
     srand((unsigned)time(NULL)); //set seed to generate random nums
 
@@ -167,7 +167,7 @@ int main(int argc, char *argv[]) {
         printf("Running as master with %d workers\n", workers);
         const double start = MPI_Wtime();
         double finish;
-        int R = 100;
+        int R = 300;
         bool is_last_iteration = false;
         int worker_count = workers;
         for(int i=1; i<=R; i++) {
