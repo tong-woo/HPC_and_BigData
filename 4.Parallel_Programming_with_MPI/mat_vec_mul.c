@@ -3,21 +3,11 @@
  *
  * Purpose:  Implement parallel matrix-vector multiplication based on MPI
  *           using one-dimensional array to store them. The matrix is 
- *           distributed by block rows. The vector is distributed by block 
- *           column
+ *           distributed by block rows. 
  *
- * Compile:  gcc -o mat_vec_mul mat_vec_mul.c(for now) || mpiCC...(later)
+ * Compile:  make mat_vec_mul
  * Run:      ./mat_vec_mult(for now) || mpirun ./mat_vec_mul(later)
  *
- * Input:    1.Dimensions of the matrix and vector (n = number of rows
- *           = number of columns)
- *           2.n x n matrix A
- *           3.n-dimensional vector x
- * Output:   Product value result = A[row]*x(for now) || Product vector y = Ax(later)
- *
- * Errors:   TBA
- *
- * Notes:    1. Try to add error handling strategy in each function as required
  */
 
 #include <stdio.h>
@@ -250,6 +240,7 @@ double row_vec_mul(
 
 /**
  * The code to run as worker: receive jobs, execute them, and terminate when told to.
+ * @param DIMENSION_SIZE The size of the problem
  */
 void run_as_worker(
     int DIMENSION_SIZE
@@ -261,6 +252,7 @@ void run_as_worker(
     double * result;
     double * VECTOR_V = (double *) malloc (DIMENSION_SIZE * sizeof(double));
     while (true){
+        // Await for vector V
         MPI_Bcast(
             VECTOR_V, 
             DIMENSION_SIZE, 
@@ -270,6 +262,7 @@ void run_as_worker(
         );
 
         if (!have_received_matrix){
+            // Await for block size
             MPI_Recv(
                 &block_size,
                 1,
@@ -280,7 +273,7 @@ void run_as_worker(
 
             MATRIX_BLOCK = (double *) malloc( DIMENSION_SIZE * block_size * sizeof(double));
             result = (double *) malloc (block_size * sizeof(double));
-
+            // Await for matrix
             MPI_Recv(
                 MATRIX_BLOCK, 
                 DIMENSION_SIZE * block_size, 
@@ -288,6 +281,7 @@ void run_as_worker(
                 0, TAG_MATRIX_BLOCK,
                 MPI_COMM_WORLD, &status
             );
+            // We only receive matrix and block size one time
             have_received_matrix = true;
         }
 
@@ -295,7 +289,7 @@ void run_as_worker(
         for (int j = 0; j < block_size; j++){
             result[j] = row_vec_mul(MATRIX_BLOCK, j, VECTOR_V, DIMENSION_SIZE);
         }
-
+        // Send result to master
         MPI_Send(
             result, 
             block_size, 
@@ -312,9 +306,12 @@ void run_as_worker(
  * The code to run as master: send jobs to the workers, and await their replies.
  * There are `worker_count` workers, numbered from 1 up to and including `worker_count`.
  *
- * @param worker_count The number of workers
- * @param startval  The first value to examine.
- * @param nval The number of values to examine.
+ * @param ITERATIONS_R The number of iterations
+ * @param worker_count  The number of workers.
+ * @param DIMENSION_SIZE The problem size.
+ * @param VECTOR_RESULT The vector to put the results from workers.
+ * @param VECTOR_V The vector to multiply.
+ * @param MATRIX The matrix to multiply.
  * @return The number of values in the specified range.
  */
 void run_as_master(
@@ -331,7 +328,7 @@ void run_as_master(
     int block_size = ceil(DIMENSION_SIZE / worker_count);
 
     for(int ITERATION = 0; ITERATION < ITERATIONS_R; ITERATION++) {
-
+            // Send Vector V to workers as broadcast
             MPI_Bcast(
                 VECTOR_V, 
                 DIMENSION_SIZE, 
@@ -341,23 +338,25 @@ void run_as_master(
             );
 
             int active_workers = 0, dimensions_sent = 0;
+            // For loop to send matrix to workers
             for (int worker = 1; worker <= worker_count && dimensions_sent < DIMENSION_SIZE; worker++) {
                 if (ITERATION > 0){ // Relevant information has already been sent to this workers
                     active_workers = worker_count;
                     break;
                 }
                 int worker_block_size = block_size;
+                // Last block size 
                 if ((dimensions_sent + block_size) > DIMENSION_SIZE){
                     worker_block_size = DIMENSION_SIZE - dimensions_sent;
                 }
-
+                // Sending the workers their block size
                 MPI_Send(
                     &worker_block_size, 
                     1, 
                     MPI_INT, worker, 
                     TAG_DIMENSION, MPI_COMM_WORLD
                 );
-
+                // Sending the workers the matrix
                 MPI_Send(
                     MATRIX + dimensions_sent * DIMENSION_SIZE,
                     DIMENSION_SIZE * worker_block_size, 
@@ -373,7 +372,7 @@ void run_as_master(
             while (active_workers > 0) {
                 int worker;
                 double * result = (double *) malloc(sizeof(double) * block_size);
-
+                // Waiting for worker results
                 MPI_Status status;
                 MPI_Recv(
                     result, 
@@ -382,7 +381,7 @@ void run_as_master(
                     TAG_RESULT, MPI_COMM_WORLD, &status
                 );
                 worker = status.MPI_SOURCE;
-
+                // Appending worker results to result vector
                 memcpy(
                     VECTOR_RESULT + worker_block_start[worker], 
                     result, 
@@ -390,7 +389,7 @@ void run_as_master(
                 );
                 active_workers--;
             }
-
+            // Vector V will now point to Vector result for the next iteration
             memcpy(
                 VECTOR_V, 
                 VECTOR_RESULT, 
