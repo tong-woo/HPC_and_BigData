@@ -242,9 +242,11 @@ int main(int argc, char *argv[]) {
                     MPI_COMM_WORLD
                 );
 
+                printf("SCATTER END\n");
+
                 MPI_Barrier(MPI_COMM_WORLD);
 
-                printf("SCATTER END\n");
+                printf("BARRIER END\n");
 
                 // printf("Master sent all work...");
                 while (active_workers > 0) {
