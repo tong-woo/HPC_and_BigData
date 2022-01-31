@@ -218,31 +218,18 @@ int main(int argc, char *argv[]) {
                         TAG_DIMENSION, MPI_COMM_WORLD
                     );
 
-                    // MPI_Send(
-                    //     MATRIX_SEGMENT, 
-                    //     DIMENSION_SIZE * worker_block_size, 
-                    //     MPI_DOUBLE, worker, 
-                    //     TAG_MATRIX_BLOCK, MPI_COMM_WORLD
-                    // );
+                    MPI_Send(
+                        MATRIX + dimensions_sent * DIMENSION_SIZE, // MATRIX_SEGMENT, 
+                        DIMENSION_SIZE * worker_block_size, 
+                        MPI_DOUBLE, worker, 
+                        TAG_MATRIX_BLOCK, MPI_COMM_WORLD
+                    );
 
                     worker_block_start[worker] = dimensions_sent;
                     worker_block_sizes[worker] = worker_block_size;
                     active_workers++;
                     dimensions_sent += worker_block_size;
                 }
-
-                printf("SCATTER START\n");
-
-                MPI_Scatter(
-                    MATRIX,
-                    block_size * DIMENSION_SIZE,
-                    MPI_DOUBLE,
-                    MATRIX_SEGMENT, 0, MPI_DOUBLE, 
-                    0, 
-                    MPI_COMM_WORLD
-                );
-
-                MPI_Barrier(MPI_COMM_WORLD);
 
                 printf("SCATTER END\n");
 
@@ -269,29 +256,8 @@ int main(int argc, char *argv[]) {
                         result, 
                         sizeof(double) * worker_block_sizes[worker]
                     );
-
-                    //turn_off_worker(worker);
                     active_workers--;
-
-                    // if (dimensions_sent < DIMENSION_SIZE) { // Send next dimension
-                    //     memcpy( // Get row of matrix to send to worker
-                    //         MATRIX_SEGMENT, 
-                    //         MATRIX + dimensions_sent * DIMENSION_SIZE, 
-                    //         sizeof(double) * DIMENSION_SIZE
-                    //     );
-                    //     send_work_command(worker, MATRIX_SEGMENT, DIMENSION_SIZE);
-                    //     worker_dimension_mapping[worker] = dimensions_sent;
-                    //     dimensions_sent++;
-                    // } else { // Turn off worker
-                    //     if (last_iteration){
-                    //         turn_off_worker(worker); 
-                    //     }
-                    //     active_workers--;
-                    // }
                 }
-
-                //VECTOR_V = VECTOR_R;
-                // Print_vector("R", VECTOR_R, DIMENSION_SIZE);
         //}
         const double finish = MPI_Wtime();
         printf("Stopped as master. This took %.4f seconds\n", finish-start);
@@ -324,18 +290,14 @@ int main(int argc, char *argv[]) {
             double * MATRIX_BLOCK = (double *) malloc( DIMENSION_SIZE * block_size * sizeof(double));
             double * result = (double *) malloc (block_size * sizeof(double));
 
-            double * dummy = (double *) malloc( 1 * sizeof(double));;
-
-            MPI_Barrier(MPI_COMM_WORLD);
             printf("3\n");
             printf("hm %d\n", block_size);
-            MPI_Scatter(
-                MATRIX_BLOCK, DIMENSION_SIZE * block_size, MPI_DOUBLE,
+            MPI_Recv(
                 MATRIX_BLOCK, 
                 DIMENSION_SIZE * block_size, 
                 MPI_DOUBLE, 
-                0, 
-                MPI_COMM_WORLD
+                0, TAG_MATRIX_BLOCK,
+                MPI_COMM_WORLD, &status
             );
             printf("4\n");
             // Perform matrix multiplacion
