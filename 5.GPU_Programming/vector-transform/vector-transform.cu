@@ -104,7 +104,7 @@ int vectorTransformSeq(int n, float* a, float* b, float* result) {
   sequentialTime.stop();
   
   cout << "vector-transform (sequential): \t\t" << sequentialTime << endl;
-
+  return 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -131,13 +131,14 @@ int main(int argc, char* argv[]) {
     // verify the resuls
     for(int i=0; i<n; i++) {
 //	  if (result[i]!=result_s[i]) {
-      if (fabs(result[i] - results_s[i]) >0.001)
-        cout << "error in results! Element " << i << " is " << result[i] << ", but should be " << result_s[i] << endl; 
-            exit(1);
-        }
+      if (fabs(result[i] - result_s[i]) >0.001){
+        std::cout << "error in results! Element " << i << " is " << result[i] << ", but should be " << result_s[i] << std::endl; 
+        exit(1);
+      }
     }
-    cout << "results OK!" << endl;
-            
+
+    std::cout << "results OK!" << std::endl;
+    
     delete[] a;
     delete[] b;
     delete[] result;
