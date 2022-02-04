@@ -108,41 +108,44 @@ int vectorTransformSeq(int n, double* a, double* b, double* result) {
 }
 
 int main(int argc, char* argv[]) {
-    int n = 655360;
-    double* a = new double[n];
-    double* b = new double[n];
-    double* result = new double[n];
-    double* result_s = new double[n];
+    int n[5] = {256, 1024, 65536, 655360, 1000000};
+    for(int j = 0; j < sizeof(n)/sizeof(int); j++){
+        double* a = new double[n[j]];
+        double* b = new double[n[j]];
+        double* result = new double[n[j]];
+        double* result_s = new double[n[j]];
 
-    if (argc > 1) n = atoi(argv[1]);
+        if (argc > 1) n = atoi(argv[1]);
 
-    cout << "Iteratively transform vector A with vector B of " << n << " integer elements." << endl;
-    // initialize the vectors.
-    for(int i=0; i<n; i++) {
-        a[i] = i;
-        b[i] = 0.1*i;
-	    result[i]=0;
-	    result_s[i]=0;
-    }
+        cout << "Iteratively transform vector A with vector B of " << n << " integer elements." << endl;
+        // initialize the vectors.
+        for(int i=0; i<n[j]; i++) {
+            a[i] = i;
+            b[i] = 0.1*i;
+            result[i]=0;
+            result_s[i]=0;
+        }
 
-    vectorTransformSeq(n, a, b, result_s);
+        vectorTransformSeq(n[j], a, b, result_s);
 
-    vectorTransformCuda(n, a, b, result);
+        vectorTransformCuda(n[j], a, b, result);
 
-    // verify the resuls
-    for(int i=0; i<n; i++) {
-//	  if (result[i]!=result_s[i]) {
-      if (fabs(result[i] - result_s[i]) >0.001){
-        std::cout << "error in results! Element " << i << " is " << result[i] << ", but should be " << result_s[i] << std::endl; 
-        exit(1);
-      }
+        // verify the resuls
+        for(int i=0; i<n[j]; i++) {
+    //	  if (result[i]!=result_s[i]) {
+            if (fabs(result[i] - result_s[i]) >0.001){
+                std::cout << "error in results! Element " << i << " is " << result[i] << ", but should be " << result_s[i] << std::endl; 
+                exit(1);
+            }
+        }
+        delete[] a;
+        delete[] b;
+        delete[] result;        
     }
 
     std::cout << "results OK!" << std::endl;
     
-    delete[] a;
-    delete[] b;
-    delete[] result;
+    
     
     return 0;
 }
