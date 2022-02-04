@@ -1,0 +1,5 @@
+Iteratively transform vector A with vector B of 655360 integer elements.
+vector-transform (sequential): 		  = 0.0162879 seconds
+vector-transform (kernel): 		  = 0.000836417 seconds
+vector-transform (memory): 		  = 0.00895147 seconds
+results OK!
