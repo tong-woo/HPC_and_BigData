@@ -1,0 +1,6 @@
+Adding two vectors of 655360 integer elements.
+vector-add (seq):    		3147us
+vector-add (H2D):    		1433us
+vector-add (kernel): 		67us
+vector-add (D2H):    		2997us
+error in results! Element 0 is nan, but should be -nan
