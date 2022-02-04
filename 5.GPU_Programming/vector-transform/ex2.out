@@ -1,0 +1,24 @@
+
+Iteratively transform vector A with vector B of 1024 integer elements.
+vector-transform (sequential): 		  = 2.53426e-05 seconds
+vector-transform (kernel): 		  = 0.000127002 seconds
+vector-transform (memory): 		  = 0.000186396 seconds
+results OK!
+
+Iteratively transform vector A with vector B of 65536 integer elements.
+vector-transform (sequential): 		  = 0.00135307 seconds
+vector-transform (kernel): 		  = 0.000149336 seconds
+vector-transform (memory): 		  = 0.000963819 seconds
+results OK!
+
+Iteratively transform vector A with vector B of 655360 integer elements.
+vector-transform (sequential): 		  = 0.0221709 seconds
+vector-transform (kernel): 		  = 0.000815345 seconds
+vector-transform (memory): 		  = 0.00853541 seconds
+results OK!
+
+Iteratively transform vector A with vector B of 1000000 integer elements.
+vector-transform (sequential): 		  =  0.022457 seconds
+vector-transform (kernel): 		  = 0.00106198 seconds
+vector-transform (memory): 		  = 0.0158575 seconds
+error in results! Element 999936 is 0, but should be 4.99936e+11

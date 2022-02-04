@@ -86,11 +86,11 @@ void vectorTransformCuda(int n, double* a, double* b, double* result) {
     checkCudaCall(cudaFree(deviceB));
     checkCudaCall(cudaFree(deviceResult));
 
-    cout << "vector-transform (kernel): \t\t" << kernelTime1  << endl;
-    cout << "vector-transform (memory): \t\t" << memoryTime << endl;
+    cout << "vector-transform (kernel): \t\t" << kernelTime1 << endl;
+    cout << "vector-transform (memory): \t\t" << memoryTime  << endl;
 }
 
-int vectorTransformSeq(int n, double* a, double* b, double* result) {
+int vectorTransformSeq(int n, double* a, double* b, double* result){
   int i,j; 
 
   timer sequentialTime = timer("Sequential");
@@ -108,16 +108,16 @@ int vectorTransformSeq(int n, double* a, double* b, double* result) {
 }
 
 int main(int argc, char* argv[]) {
-    int n[5] = {256, 1024, 65536, 655360, 1000000};
+    int n[4] = {1024, 65536, 655360, 1000000};
     for(int j = 0; j < sizeof(n)/sizeof(int); j++){
         double* a = new double[n[j]];
         double* b = new double[n[j]];
         double* result = new double[n[j]];
         double* result_s = new double[n[j]];
 
-        if (argc > 1) n = atoi(argv[1]);
+        if (argc > 1) n[j] = atoi(argv[1]);
 
-        cout << "Iteratively transform vector A with vector B of " << n << " integer elements." << endl;
+        cout << "\nIteratively transform vector A with vector B of " << n[j] << " integer elements." << endl;
         // initialize the vectors.
         for(int i=0; i<n[j]; i++) {
             a[i] = i;
@@ -140,12 +140,8 @@ int main(int argc, char* argv[]) {
         }
         delete[] a;
         delete[] b;
-        delete[] result;        
+        delete[] result;
+	std::cout<<"results OK!" <<std::endl;	
     }
-
-    std::cout << "results OK!" << std::endl;
-    
-    
-    
     return 0;
 }
