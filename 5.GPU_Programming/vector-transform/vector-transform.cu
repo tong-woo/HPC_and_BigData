@@ -26,8 +26,11 @@ static void checkCudaCall(cudaError_t result) {
 
 
 __global__ void vectorTransformKernel(float* A, float* B, float* Result) {
+    int i = threadIdx.x + blockDim.x*blockIdx.x;
+    for(int j=0; j<5; j++){
+        Result[i] = Result[i] + A[i]*B[i];
+    }
 // insert operation here
-
 }
 
 void vectorTransformCuda(int n, float* a, float* b, float* result) {
@@ -118,13 +121,13 @@ int main(int argc, char* argv[]) {
     for(int i=0; i<n; i++) {
         a[i] = i;
         b[i] = 0.1*i;
-	result[i]=0;
-	result_s[i]=0;
+	    result[i]=0;
+	    result_s[i]=0;
     }
 
     vectorTransformSeq(n, a, b, result_s);
     vectorTransformCuda(n, a, b, result);
-    
+
     // verify the resuls
     for(int i=0; i<n; i++) {
 //	  if (result[i]!=result_s[i]) {
