@@ -26,10 +26,12 @@ static void checkCudaCall(cudaError_t result) {
 
 __global__ void vectorAddKernel(float* A, float* B, float* Result) {
     // insert operation here
+	int i = threadIdx.x + blockDim.x*blockIdx.x;
+	Result[i] = A[i] + B[i];
 }
 
 void vectorAddCuda(int n, float* a, float* b, float* result) {
-    int threadBlockSize = 64;// 128, 256, 512, 1024
+    int threadBlockSize = 64; // 128, 256, 512, 1024
 
     // allocate the vectors on the GPU
     float* deviceA = NULL;
