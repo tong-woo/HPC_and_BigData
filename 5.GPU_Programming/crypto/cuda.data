@@ -1,0 +1,189 @@
+#lqfoxgh <vwglr.k>
+#lqfoxgh <vwgole.k>
+#lqfoxgh <pdwk.k>
+#lqfoxgh <vwulqj.k>
+#lqfoxgh <lrvwuhdp>
+#lqfoxgh "Wlphu.kss"
+
+xvlqj qdphvsdfh vwg;
+xvlqj ORIDU::QVWlphu;
+
+/* Xwlolwb ixqfwlrq, xvh wr gr huuru fkhfnlqj.
+
+   Xvh wklv ixqfwlrq olnh wklv:
+
+   fkhfnFxgdFdoo(fxgdPdoorf((yrlg **) &ghylfhUJE, lpjV * vlchri(froru_w)));
+
+   Dqg wr fkhfn wkh uhvxow ri d nhuqho lqyrfdwlrq:
+
+   fkhfnFxgdFdoo(fxgdJhwOdvwHuuru());
+*/
+vwdwlf yrlg fkhfnFxgdFdoo(fxgdHuuru_w uhvxow) {
+    li (uhvxow != fxgdVxffhvv) {
+        fhuu << "fxgd huuru: " << fxgdJhwHuuruVwulqj(uhvxow) << hqgo;
+        halw(1);
+    }
+}
+
+
+__joredo__ yrlg yhfwruDggNhuqho(iordw* ghylfhD, iordw* ghylfhE, iordw* ghylfhUhvxow) {
+    xqvljqhg lqgha = eorfnLga.a * eorfnGlp.a + wkuhdgLga.a;
+    ghylfhUhvxow[lqgha] = ghylfhD[lqgha] + ghylfhE[lqgha];
+}
+
+yrlg yhfwruDggFxgd(lqw q, iordw* d, iordw* e, iordw* uhvxow) {
+    lqw wkuhdgEorfnVlch = 512;
+
+    // doorfdwh wkh yhfwruv rq wkh JSX
+    iordw* ghylfhD = QXOO;
+    fkhfnFxgdFdoo(fxgdPdoorf((yrlg **) &ghylfhD, q * vlchri(iordw)));
+    li (ghylfhD == QXOO) {
+        frxw << "frxog qrw doorfdwh phprub!" << hqgo;
+        uhwxuq;
+    }
+    iordw* ghylfhE = QXOO;
+    fkhfnFxgdFdoo(fxgdPdoorf((yrlg **) &ghylfhE, q * vlchri(iordw)));
+    li (ghylfhE == QXOO) {
+        fkhfnFxgdFdoo(fxgdIuhh(ghylfhD));
+        frxw << "frxog qrw doorfdwh phprub!" << hqgo;
+        uhwxuq;
+    }
+    iordw* ghylfhUhvxow = QXOO;
+    fkhfnFxgdFdoo(fxgdPdoorf((yrlg **) &ghylfhUhvxow, q * vlchri(iordw)));
+    li (ghylfhUhvxow == QXOO) {
+        fkhfnFxgdFdoo(fxgdIuhh(ghylfhD));
+        fkhfnFxgdFdoo(fxgdIuhh(ghylfhE));
+        frxw << "frxog qrw doorfdwh phprub!" << hqgo;
+        uhwxuq;
+    }
+
+    QVWlphu nhuqhoWlph1 = QVWlphu("nhuqhoWlph1", idovh, idovh);
+    QVWlphu phprubWlph = QVWlphu("phprubWlph", idovh, idovh);
+
+    // frsb wkh ruljlqdo yhfwruv wr wkh JSX
+    phprubWlph.vwduw();
+    fkhfnFxgdFdoo(fxgdPhpfsb(ghylfhD, d, q*vlchri(iordw), fxgdPhpfsbKrvwWrGhylfh));
+    fkhfnFxgdFdoo(fxgdPhpfsb(ghylfhE, e, q*vlchri(iordw), fxgdPhpfsbKrvwWrGhylfh));
+    phprubWlph.vwrs();
+
+    // hahfxwh nhuqho
+    nhuqhoWlph1.vwduw();
+    yhfwruDggNhuqho<<<q/wkuhdgEorfnVlch, wkuhdgEorfnVlch>>>(ghylfhD, ghylfhE, ghylfhUhvxow);
+    fxgdGhylfhVbqfkurqlch();
+    nhuqhoWlph1.vwrs();
+
+    // fkhfn zkhwkhu wkh nhuqho lqyrfdwlrq zdv vxffhvvixo
+    fkhfnFxgdFdoo(fxgdJhwOdvwHuuru());
+
+    // frsb uhvxow edfn
+    phprubWlph.vwduw();
+    fkhfnFxgdFdoo(fxgdPhpfsb(uhvxow, ghylfhUhvxow, q * vlchri(iordw), fxgdPhpfsbGhylfhWrKrvw));
+    fkhfnFxgdFdoo(fxgdPhpfsb(e, ghylfhE, q * vlchri(iordw), fxgdPhpfsbGhylfhWrKrvw));
+    phprubWlph.vwrs();
+
+    fkhfnFxgdFdoo(fxgdIuhh(ghylfhD));
+    fkhfnFxgdFdoo(fxgdIuhh(ghylfhE));
+    fkhfnFxgdFdoo(fxgdIuhh(ghylfhUhvxow));
+
+    frxw << ilahg << vhwsuhflvlrq(6);
+    frxw << "yhfwru-dgg (nhuqho): \w\w" << nhuqhoWlph1.jhwHodsvhg() << " vhfrqgv." << hqgo;
+    frxw << "yhfwru-dgg (phprub): \w\w" << phprubWlph.jhwHodsvhg() << " vhfrqgv." << hqgo;
+}
+
+lqw yhfwruDggVht(lqw q, iordw* d, iordw* e, iordw* uhvxow) {
+  lqw l; 
+
+  QVWlphu vhtxhqwldoWlph = QVWlphu("Vhtxhqwldo", idovh, idovh);
+  
+  vhtxhqwldoWlph.vwduw();
+  iru (l=0; l<q; l++) {
+	uhvxow[l] = d[l]+e[l];
+  }
+  vhtxhqwldoWlph.vwrs();
+  
+  frxw << ilahg << vhwsuhflvlrq(6);
+  frxw << "yhfwru-dgg (vhtxhqwldo): \w\w" << vhtxhqwldoWlph.jhwHodsvhg() << " vhfrqgv." << hqgo;
+}
+
+lqw ilohVlch() {
+  lqw vlch; 
+
+  livwuhdp iloh ("ruljlqdo.gdwd", lrv::lq|lrv::elqdub|lrv::dwh);
+  li (iloh.lv_rshq())
+  {
+    vlch = iloh.whooj();
+    iloh.forvh();
+  }
+  hovh {
+    frxw << "Xqdeoh wr rshq iloh";
+    vlch = -1; 
+  }
+  uhwxuq vlch; 
+}
+
+lqw uhdgGdwd(fkdu *ilohQdph, fkdu *gdwd) {
+
+  vwuhdpsrv vlch;
+
+  livwuhdp iloh (ilohQdph, lrv::lq|lrv::elqdub|lrv::dwh);
+  li (iloh.lv_rshq())
+  {
+    vlch = iloh.whooj();
+    iloh.vhhnj (0, lrv::ehj);
+    iloh.uhdg (gdwd, vlch);
+    iloh.forvh();
+
+    frxw << "wkh hqwluh iloh frqwhqw lv lq phprub";
+  }
+  hovh frxw << "Xqdeoh wr rshq iloh";
+  uhwxuq 0;
+}
+
+lqw zulwhGdwd(lqw vlch, fkdu *ilohQdph, fkdu *gdwd) {
+  rivwuhdp iloh (ilohQdph, lrv::rxw|lrv::elqdub|lrv::dwh);
+  li (iloh.lv_rshq())
+  {
+    iloh.zulwh (gdwd, vlch);
+    iloh.forvh();
+
+    frxw << "wkh hqwluh iloh frqwhqw zdv zulwwhq wr iloh phprub";
+    uhwxuq 0;
+  }
+  hovh frxw << "Xqdeoh wr rshq iloh";
+
+  uhwxuq -1; 
+}
+
+lqw HqfubswVht (lqw q, fkdu* gdwd_lq, fkdu* gdwd_rxw) 
+{
+  uhwxuq 0; 
+}
+
+lqw HqfubswFxgd (lqw q, fkdu* gdwd_lq, fkdu* gdwd_rxw) {
+  uhwxuq 0;
+}
+
+lqw pdlq(lqw dujf, fkdu* dujy[]) {
+    lqw q;;
+
+    q = ilohVlch();
+    li (q == -1) {
+	frxw << "Iloh qrw irxqg! Halwlqj ... " << hqgo; 
+	halw(0);
+    }
+
+    fkdu* gdwd_lq = qhz fkdu[q];
+    fkdu* gdwd_rxw = qhz fkdu[q];    
+    uhdgGdwd("ruljlqdo.gdwd", gdwd_lq); 
+
+    frxw << "Hqfubswlqj d iloh ri " << q << " fkdudfwhuv." << hqgo;
+
+    HqfubswVht(q, gdwd_lq, gdwd_rxw);
+    zulwhGdwd(q, "vhtxhqwldo.gdwd", gdwd_rxw);
+    HqfubswFxgd(q, gdwd_lq, gdwd_rxw);
+    zulwhGdwd(q, "fxgd.gdwd", gdwd_rxw);  
+    ghohwh[] gdwd_lq;
+    ghohwh[] gdwd_rxw;
+    
+    uhwxuq 0;
+}
