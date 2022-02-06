@@ -1,6 +1,6 @@
 Adding two vectors of 655360 integer elements.
-vector-add (seq):    		2654us
-vector-add (H2D):    		1424us
-vector-add (kernel): 		72us
-vector-add (D2H):    		1473us
+vector-add (seq):    		2722us
+vector-add (H2D):    		1451us
+vector-add (kernel): 		71us
+vector-add (D2H):    		3056us
 results OK!
