@@ -296,7 +296,6 @@ int main(int argc, char* argv[]) {
     int n;
     int key[] ={1, 2, 3};
     int key_len = sizeof(key) / sizeof(int);
-    printf("%d",key_len);
     n = fileSize();
 
     if (n == -1) {
@@ -317,7 +316,7 @@ int main(int argc, char* argv[]) {
 
     readData("cuda.data", data_in);
 
-    cout << "Decrypting a file of " << n << "characters" << endl;
+    cout << "Decrypting a file of " << n << " characters" << endl;
     DecryptSeq(n, key, key_len, data_in, data_out);
     writeData(n, "sequential_decrypted.data", data_out);
     DecryptCuda(n, key_len, data_in, data_out); 
