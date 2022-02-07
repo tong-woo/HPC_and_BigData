@@ -1,189 +1,189 @@
-#lqfoxgh <vwglr.k>
-#lqfoxgh <vwgole.k>
-#lqfoxgh <pdwk.k>
-#lqfoxgh <vwulqj.k>
-#lqfoxgh <lrvwuhdp>
-#lqfoxgh "Wlphu.kss"
+#kqdnxeg <uwekr.j>
+#loeovfh <vufojd.i>
+#kqdnxeg <oduj.i>
+#kqdnxeg <uwskqh.k>
+#jpfmwgf <jqvuthbo>
+#loeovfh "Wjohs.kqr"
 
-xvlqj qdphvsdfh vwg;
-xvlqj ORIDU::QVWlphu;
+xtkqh qbohtrddg tvg;
+xtkqh OPHDS::OUWjohs;
 
-/* Xwlolwb ixqfwlrq, xvh wr gr huuru fkhfnlqj.
+/* Wwjnlua gwqdvlpp, wvf wp gp hstrs figflkqh.
 
-   Xvh wklv ixqfwlrq olnh wklv:
+   Wvf wikv hxoewjqq nllg ujlt:
 
-   fkhfnFxgdFdoo(fxgdPdoorf((yrlg **) &ghylfhUJE, lpjV * vlchri(froru_w)));
+   ekfenDwgbEdmn(dwgbOdmnrd((wqle **) &fhwkffTJC, jojT * ulagrg(fpnrs_w)));
 
-   Dqg wr fkhfn wkh uhvxow ri d nhuqho lqyrfdwlrq:
+   Bpg vr ekfen vkf ufuxmv ph b nftqfn jpypedukro:
 
-   fkhfnFxgdFdoo(fxgdJhwOdvwHuuru());
+   ekfenDwgbEdmn(dwgbIhuNdtvHstrs());
 */
-vwdwlf yrlg fkhfnFxgdFdoo(fxgdHuuru_w uhvxow) {
-    li (uhvxow != fxgdVxffhvv) {
-        fhuu << "fxgd huuru: " << fxgdJhwHuuruVwulqj(uhvxow) << hqgo;
-        halw(1);
+tvdukf xrjf djhdmFvfdDcom(fvfdFtupt_u ufuxmv) {
+    ki (ufuxmv != dwgbUxdehtu) {
+        fftu << "fvfd gusqu: " << execJfvHstrsUwskqh(ufuxmv) << gqen;
+        fzlu(1);
     }
 }
 
 
-__joredo__ yrlg yhfwruDggNhuqho(iordw* ghylfhD, iordw* ghylfhE, iordw* ghylfhUhvxow) {
-    xqvljqhg lqgha = eorfnLga.a * eorfnGlp.a + wkuhdgLga.a;
-    ghylfhUhvxow[lqgha] = ghylfhD[lqgha] + ghylfhE[lqgha];
+__hnrcco__ wqle yfewptDefNftqfn(gnrbv* fhwkffC, hopcw* gfxldgE, imqdu* egyjehSgvvnw) {
+    xoulhphe lofhy = dopenJfa.z * emqflFln.a + ujufcgJfa.z;
+    gfxldgUfuxmv[jpgfz] = egyjehB[lofhy] + gfxldgE[kqega];
 }
 
-yrlg yhfwruDggFxgd(lqw q, iordw* d, iordw* e, iordw* uhvxow) {
-    lqw wkuhdgEorfnVlch = 512;
+wqle yfewptDefFvfd(kqu q, imqdu* b, gnrbv* d, hopcw* ufuxmv) {
+    kqu withbfEmqflUlag = 512;
 
-    // doorfdwh wkh yhfwruv rq wkh JSX
-    iordw* ghylfhD = QXOO;
-    fkhfnFxgdFdoo(fxgdPdoorf((yrlg **) &ghylfhD, q * vlchri(iordw)));
-    li (ghylfhD == QXOO) {
-        frxw << "frxog qrw doorfdwh phprub!" << hqgo;
-        uhwxuq;
+    // bnopedug ujh xhdvrsu pp ujh ISV
+    gnrbv* fhwkffC = QVNO;
+    djhdmFvfdDcom(fvfdNcomqf((ypkg **) &egyjehB, o * ulagrg(imqdu)));
+    ki (gfxldgD == PXMN) {
+        fpww << "fpwoe qpv bnopedug ngpptb!" << fpgm;
+        ufvxsp;
     }
-    iordw* ghylfhE = QXOO;
-    fkhfnFxgdFdoo(fxgdPdoorf((yrlg **) &ghylfhE, q * vlchri(iordw)));
-    li (ghylfhE == QXOO) {
-        fkhfnFxgdFdoo(fxgdIuhh(ghylfhD));
-        frxw << "frxog qrw doorfdwh phprub!" << hqgo;
-        uhwxuq;
+    imqdu* egyjehC = PXMN;
+    figflExecFbno(execPbnope((xrjf **) &gfxldgE, q * tkcfqi(hopcw)));
+    jh (fhwkffD == OWOM) {
+        ekfenDwgbEdmn(dwgbHufg(egyjehB));
+        ervv << "ervng pru dmnrdcwf pforsa!" << hofo;
+        thuwuo;
     }
-    iordw* ghylfhUhvxow = QXOO;
-    fkhfnFxgdFdoo(fxgdPdoorf((yrlg **) &ghylfhUhvxow, q * vlchri(iordw)));
-    li (ghylfhUhvxow == QXOO) {
-        fkhfnFxgdFdoo(fxgdIuhh(ghylfhD));
-        fkhfnFxgdFdoo(fxgdIuhh(ghylfhE));
-        frxw << "frxog qrw doorfdwh phprub!" << hqgo;
-        uhwxuq;
+    hopcw* gfxldgUfuxmv = QVNO;
+    djhdmFvfdDcom(fvfdNcomqf((ypkg **) &egyjehSgvvnw, q * tkcfqi(hopcw)));
+    jh (fhwkffThtwou == QVNO) {
+        djhdmFvfdDcom(fvfdGthf(gfxldgD));
+        djhdmFvfdDcom(fvfdGthf(gfxldgE));
+        dqxu << "dqxmf oqw comqfbvh ohnquz!" << gqen;
+        sgwvtq;
     }
 
-    QVWlphu nhuqhoWlph1 = QVWlphu("nhuqhoWlph1", idovh, idovh);
-    QVWlphu phprubWlph = QVWlphu("phprubWlph", idovh, idovh);
+    PVUkpft lguogoUkpf1 = QTVlngu("nftqfnWjoh1", hdmuh, ibnvf);
+    QTVlngu ohnquzVlng = QTVlngu("pforsaWjoh", gcotg, hdmuh);
 
-    // frsb wkh ruljlqdo yhfwruv wr wkh JSX
-    phprubWlph.vwduw();
-    fkhfnFxgdFdoo(fxgdPhpfsb(ghylfhD, d, q*vlchri(iordw), fxgdPhpfsbKrvwWrGhylfh));
-    fkhfnFxgdFdoo(fxgdPhpfsb(ghylfhE, e, q*vlchri(iordw), fxgdPhpfsbKrvwWrGhylfh));
-    phprubWlph.vwrs();
+    // fprb vkf rskjjpdm yfewptv vr vkf JQW
+    ohnquzVlng.tvdsv();
+    ekfenDwgbEdmn(dwgbOhnesz(gfxldgD, d, q*ulagrg(imqdu), execPfofqaKpuwUqGfxldg));
+    ekfenDwgbEdmn(dwgbOhnesz(gfxldgE, e, q*ulagrg(imqdu), execPfofqaKpuwUqGfxldg));
+    ohnquzVlng.tvrq();
 
-    // hahfxwh nhuqho
-    nhuqhoWlph1.vwduw();
-    yhfwruDggNhuqho<<<q/wkuhdgEorfnVlch, wkuhdgEorfnVlch>>>(ghylfhD, ghylfhE, ghylfhUhvxow);
-    fxgdGhylfhVbqfkurqlch();
-    nhuqhoWlph1.vwrs();
+    // gafexug lguogo
+    nftqfnWjoh1.vucuu();
+    wgfuquBfgLguogo<<<o/withbfEmqflUlag, vksgdeDopenTkcf>>>(gfxldgD, gfxldgE, gfxldgUfuxmv);
+    dwgbFhwkffUboeksqqjbh();
+    nftqfnWjoh1.vuqs();
 
-    // fkhfn zkhwkhu wkh nhuqho lqyrfdwlrq zdv vxffhvvixo
-    fkhfnFxgdFdoo(fxgdJhwOdvwHuuru());
+    // djhdm xjhujhs wig lguogo kqwqfbvlpp xcv uxdehtuivn
+    ekfenDwgbEdmn(dwgbIhuNdtvHstrs());
 
-    // frsb uhvxow edfn
-    phprubWlph.vwduw();
-    fkhfnFxgdFdoo(fxgdPhpfsb(uhvxow, ghylfhUhvxow, q * vlchri(iordw), fxgdPhpfsbGhylfhWrKrvw));
-    fkhfnFxgdFdoo(fxgdPhpfsb(e, ghylfhE, q * vlchri(iordw), fxgdPhpfsbGhylfhWrKrvw));
-    phprubWlph.vwrs();
+    // fprb thtwou eben
+    pforsaWjoh.uwbtw();
+    figflExecFbno(execPfofqa(sgvvnw, gfxldgUfuxmv, p * vjbhph(gnrbv), fvfdNgpdrbEgyjehUqKpuw));
+    figflExecFbno(execPfofqa(c, egyjehC, o * ulagrg(imqdu), execPfofqaGfxldgWpJrtv));
+    ohnquzVlng.tvrq();
 
-    fkhfnFxgdFdoo(fxgdIuhh(ghylfhD));
-    fkhfnFxgdFdoo(fxgdIuhh(ghylfhE));
-    fkhfnFxgdFdoo(fxgdIuhh(ghylfhUhvxow));
+    ekfenDwgbEdmn(dwgbHufg(egyjehB));
+    djhdmFvfdDcom(fvfdGthf(gfxldgE));
+    figflExecFbno(execIsgh(fhwkffThtwou));
 
-    frxw << ilahg << vhwsuhflvlrq(6);
-    frxw << "yhfwru-dgg (nhuqho): \w\w" << nhuqhoWlph1.jhwHodsvhg() << " vhfrqgv." << hqgo;
-    frxw << "yhfwru-dgg (phprub): \w\w" << phprubWlph.jhwHodsvhg() << " vhfrqgv." << hqgo;
+    ervv << gkaff << tgwqthdkvjqq(6);
+    dqxu << "wgfuqu-cge (lguogo): \v\u" << lguogoUkpf1.hgwFndquhe() << " tgfppgt." << gqen;
+    fpww << "yfewpt-bfg (pforsa): \u\w" << pforsaWjoh.ihuGobrvff() << " uhdqqeu." << hofo;
 }
 
-lqw yhfwruDggVht(lqw q, iordw* d, iordw* e, iordw* uhvxow) {
-  lqw l; 
+lov wgfuquBfgTgt(kqu q, imqdu* b, gnrbv* d, hopcw* ufuxmv) {
+  lov j; 
 
-  QVWlphu vhtxhqwldoWlph = QVWlphu("Vhtxhqwldo", idovh, idovh);
+  PVUkpft tgtvgqukdmVlng = QTVlngu("Vfsxfpwjco", gcotg, hdmuh);
   
-  vhtxhqwldoWlph.vwduw();
-  iru (l=0; l<q; l++) {
-	uhvxow[l] = d[l]+e[l];
+  vfsxfpwjcoUkpf.vucuu();
+  hrs (j=0; l<p; k++) {
+	sgvvnw[k] = b[l]+e[k];
   }
-  vhtxhqwldoWlph.vwrs();
+  vfsxfpwjcoUkpf.vuqs();
   
-  frxw << ilahg << vhwsuhflvlrq(6);
-  frxw << "yhfwru-dgg (vhtxhqwldo): \w\w" << vhtxhqwldoWlph.jhwHodsvhg() << " vhfrqgv." << hqgo;
+  dqxu << ijzhe << vfvssgfjulpp(6);
+  dqxu << "wgfuqu-cge (tgtvgqukdm): \w\v" << uhrwhovlbnWjoh.ihuGobrvff() << " uhdqqeu." << hofo;
 }
 
-lqw ilohVlch() {
-  lqw vlch; 
+lov gkofUlag() {
+  jpw ulag; 
 
-  livwuhdp iloh ("ruljlqdo.gdwd", lrv::lq|lrv::elqdub|lrv::dwh);
-  li (iloh.lv_rshq())
+  lguwsgdn ijnh ("ptlhkqbn.ecwb", krt::jp|jqv::ejpdsa|jqv::dug);
+  ki (ijnh.kv_qsfp())
   {
-    vlch = iloh.whooj();
-    iloh.forvh();
+    vjbh = gkof.wfnoh();
+    gkof.fmqvf();
   }
-  hovh {
-    frxw << "Xqdeoh wr rshq iloh";
-    vlch = -1; 
+  hmuh {
+    ervv << "Wqbdof wp rqgq hlmg";
+    tkcf = -1; 
   }
-  uhwxuq vlch; 
+  sgwvtq ulag; 
 }
 
-lqw uhdgGdwd(fkdu *ilohQdph, fkdu *gdwd) {
+lov sgdeFduc(djds *gkofPdng, ekbt *fduc) {
 
-  vwuhdpsrv vlch;
+  tvufcpqqv ulag;
 
-  livwuhdp iloh (ilohQdph, lrv::lq|lrv::elqdub|lrv::dwh);
-  li (iloh.lv_rshq())
+  kitvufcp hlmg (hlmgQboh, lpu::kq|krt::ckqbtb|krt::bvh);
+  lg (gkof.lt_rqgq())
   {
-    vlch = iloh.whooj();
-    iloh.vhhnj (0, lrv::ehj);
-    iloh.uhdg (gdwd, vlch);
-    iloh.forvh();
+    tkcf = hlmg.ugomi();
+    hlmg.tghli (0, krt::cgj);
+    hlmg.sgde (ecwb, tkcf);
+    ijnh.eopuh();
 
-    frxw << "wkh hqwluh iloh frqwhqw lv lq phprub";
+    dqxu << "ujh gqukuf ijnh erovhov ju jp ngpptb";
   }
-  hovh frxw << "Xqdeoh wr rshq iloh";
-  uhwxuq 0;
+  fnvf fpww << "Xocemg uq prho ijnh";
+  ufvxsp 0;
 }
 
-lqw zulwhGdwd(lqw vlch, fkdu *ilohQdph, fkdu *gdwd) {
-  rivwuhdp iloh (ilohQdph, lrv::rxw|lrv::elqdub|lrv::dwh);
-  li (iloh.lv_rshq())
+jpw yujvhEcwb(lov tkcf, djds *gkofPdng, ekbt *fduc) {
+  rguwsgdn ijnh (ijnhOcpf, jqv::rvv|jqv::ejpdsa|jqv::dug);
+  ki (ijnh.kv_qsfp())
   {
-    iloh.zulwh (gdwd, vlch);
-    iloh.forvh();
+    ijnh.yujvh (gbvd, vjbh);
+    hlmg.dnrtg();
 
-    frxw << "wkh hqwluh iloh frqwhqw zdv zulwwhq wr iloh phprub";
-    uhwxuq 0;
+    fpww << "wig fpwjth hlmg dqqugqu zbu xtluvho wp ijnh ohnquz";
+    ufvxsp 0;
   }
-  hovh frxw << "Xqdeoh wr rshq iloh";
+  fnvf fpww << "Xocemg uq prho ijnh";
 
-  uhwxuq -1; 
+  sgwvtq -1; 
 }
 
-lqw HqfubswVht (lqw q, fkdu* gdwd_lq, fkdu* gdwd_rxw) 
+jpw GqdtbqvVfs (kqu q, ficu* gbvd_kq, ficu* gbvd_qxu) 
 {
-  uhwxuq 0; 
+  ufvxsp 0; 
 }
 
-lqw HqfubswFxgd (lqw q, fkdu* gdwd_lq, fkdu* gdwd_rxw) {
-  uhwxuq 0;
+kqu HoeuzrwDwgb (jpw p, ekbt* fduc_jp, ekbt* fduc_pww) {
+  sgwvtq 0;
 }
 
-lqw pdlq(lqw dujf, fkdu* dujy[]) {
-    lqw q;;
+kqu pbkq(kqu dsif, ficu* dsiy[]) {
+    kqu q;;
 
-    q = ilohVlch();
-    li (q == -1) {
-	frxw << "Iloh qrw irxqg! Halwlqj ... " << hqgo; 
-	halw(0);
+    q = gkofUlag();
+    ki (q == -1) {
+	fpww << "Ijnh pru ipwqe! Fzlukqh ... " << hofo; 
+	gajv(0);
     }
 
-    fkdu* gdwd_lq = qhz fkdu[q];
-    fkdu* gdwd_rxw = qhz fkdu[q];    
-    uhdgGdwd("ruljlqdo.gdwd", gdwd_lq); 
+    djds* ecwb_lo = phx ficu[p];
+    djds* ecwb_rvv = qfy djds[q];    
+    ufcgEcwb("ptlhkqbn.ecwb", fduc_jp); 
 
-    frxw << "Hqfubswlqj d iloh ri " << q << " fkdudfwhuv." << hqgo;
+    fpww << "Hoeuzrwjpj c gkof rg " << p << " ficubewftv." << fpgm;
 
-    HqfubswVht(q, gdwd_lq, gdwd_rxw);
-    zulwhGdwd(q, "vhtxhqwldo.gdwd", gdwd_rxw);
-    HqfubswFxgd(q, gdwd_lq, gdwd_rxw);
-    zulwhGdwd(q, "fxgd.gdwd", gdwd_rxw);  
-    ghohwh[] gdwd_lq;
-    ghohwh[] gdwd_rxw;
+    HoeuzrwTgt(p, fduc_jp, fduc_pww);
+    yujvhEcwb(q, "tgtvgqukdm.gbvd", ecwb_rvv);
+    FpfsasuExec(o, ecwb_lo, ecwb_rvv);
+    xtlugGbvd(p, "fvfd.fduc", gbvd_qxu);  
+    fhmgwf[] fduc_jp;
+    gfnhug[] gbvd_qxu;
     
-    uhwxuq 0;
+    sgwvtq 0;
 }
